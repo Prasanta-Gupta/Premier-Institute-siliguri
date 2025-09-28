@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier Institute — Fee & Admission</title>
+<style>
+/* Professional Base Theme */
+body {
+  margin:0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background:#f5f7fa;
+  color:#222;
+  line-height:1.6;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:30px 15px;
+}
+
+h1 {
+  font-size:28px;
+  margin-bottom:25px;
+  font-weight:700;
+  color:#1a237e;
+  text-align:center;
+}
+
+/* Content Blocks */
+.block {
+  background:#fff;
+  border-radius:12px;
+  padding:25px;
+  width:95%;
+  max-width:650px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.1);
+  margin-bottom:25px;
+  border:1px solid #e0e0e0;
+}
+
+.block h2 {
+  margin-bottom:15px;
+  font-size:22px;
+  color:#0d47a1;
+  text-align:left;
+  border-left:5px solid #2196f3;
+  padding-left:10px;
+}
+
+label {
+  display:block;
+  margin:12px 0 6px;
+  font-weight:600;
+  color:#333;
+}
+input, select, textarea {
+  width:100%;
+  padding:12px;
+  border:1px solid #bbb;
+  border-radius:6px;
+  font-size:15px;
+  transition:border 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:#2196f3;
+  outline:none;
+}
+textarea { resize:vertical; }
+
+/* Professional Button */
+button {
+  margin-top:18px;
+  padding:12px;
+  width:100%;
+  background:#1976d2;
+  border:none;
+  border-radius:6px;
+  color:white;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background 0.3s;
+}
+button:hover { background:#0d47a1; }
+
+a button { text-decoration:none; }
+
+/* Extra small text */
+.note {
+  font-size:13px;
+  color:#555;
+  margin-top:10px;
+  text-align:center;
+}
+</style>
+</head>
+<body>
+
+<h1>Premier Institute</h1>
+
+<!-- Admission Form -->
+<div class="block">
+  <h2>Admission</h2>
+  <p>Fill in the admission form carefully with your details.</p>
+
+  <form id="admissionForm">
+    <label>Full Name</label>
+    <input type="text" name="Full Name" required>
+
+    <label>Current Class</label>
+    <input type="text" name="Class" required>
+
+    <label>School</label>
+    <input type="text" name="School" required>
+
+    <label>Select Board</label>
+    <select name="Board" required>
+      <option value="">Select</option>
+      <option>CBSE</option>
+      <option>ICSE</option>
+      <option>ISE</option>
+      <option>WBBSE</option>
+      <option>WBCHSE</option>
+      <option>NIOS</option>
+      <option>IGNOU</option>
+    </select>
+
+    <label>Subject Weak In</label>
+    <input type="text" name="Weak Subject" required>
+
+    <label>Subject Good In</label>
+    <input type="text" name="Good Subject" required>
+
+    <label>Contact Number</label>
+    <input type="tel" name="Contact Number" placeholder="+91" required>
+
+    <label>Location</label>
+    <select name="Location" required>
+      <option value="">Select</option>
+      <option>Babupara</option>
+      <option>South colony</option>
+    </select>
+
+    <label>Timing</label>
+    <select name="Timing" required>
+      <option value="">Select</option>
+      <option>Morning</option>
+      <option>Evening</option>
+    </select>
+
+    <label>Custom Message for the Teacher (Max 300 words)</label>
+    <textarea name="Message" rows="6" maxlength="1800"></textarea>
+
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+<!-- Fee Section -->
+<div class="block">
+  <h2>Fees</h2>
+  <p>
+    Our fee structure is transparent, affordable, and designed to ensure every student receives 
+    high-quality education without financial strain. Payments are flexible, fair, and focused 
+    on supporting long-term academic growth for all.
+  </p>
+  <a href="https://wa.me/919679145745"><button>Contact on WhatsApp</button></a>
+</div>
+
+<p class="note">
+Send your name and details for admin verification.  
+Teachers will contact you on the number provided.
+</p>
+
+<script>
+// ===== FORM SUBMIT TO DISCORD WEBHOOK =====
+document.getElementById("admissionForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const formData = new FormData(this);
+  let message = "**📩 New Admission Request**\n\n";
+  formData.forEach((v,k)=> message += `**${k}:** ${v}\n`);
+
+  fetch("https://discord.com/api/webhooks/1421051311012581398/vXpnuV__MgPYlsBq9kz6P4OSBNxFdq5cqYgoN07eobfh2P5EWVEkO_AoXv95HIBuK9L1", { 
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ content: message })
+  }).then(res=>{
+    alert("Form submitted successfully ✅");
+    this.reset();
+  }).catch(err=>{
+    alert("Error sending form ❌");
+    console.error(err);
+  });
+});
+</script>
+
+</body>
+</html>

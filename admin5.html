@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer Panel</title>
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  color:#fff;
+}
+.card {
+  background:#fff;
+  color:#000;
+  padding:30px;
+  border-radius:16px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.3);
+  width:340px;
+  text-align:center;
+}
+.card h1 {
+  margin-bottom:20px;
+  color:#1e3a8a;
+}
+.card label {
+  display:block;
+  margin:10px 0 5px;
+  font-weight:bold;
+}
+.card input {
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  outline:none;
+}
+.card button {
+  margin-top:20px;
+  width:100%;
+  padding:12px;
+  background:#3b82f6;
+  border:none;
+  color:#fff;
+  font-weight:bold;
+  border-radius:8px;
+  cursor:pointer;
+  transition:background 0.3s;
+}
+.card button:hover { background:#2563eb; }
+#errorMsg { color:red; margin-top:10px; display:none; }
+
+/* ===== USERS TABLE ===== */
+#usersPanel {
+  display:none;
+  max-width:900px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.3);
+  color:#000;
+}
+#usersPanel h2 {
+  text-align:center;
+  color:#1e3a8a;
+  margin-bottom:20px;
+}
+.user-block {
+  background:#f9f9f9;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+.user-block p { margin:4px 0; font-size:14px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+  <h1>Dev Login</h1>
+  <p>Only developer can access this page.For the websites Safety</p>
+  <label>Email</label>
+  <input type="email" id="email" required>
+  <label>Password</label>
+  <input type="password" id="password" required>
+  <button onclick="login()">Enter</button>
+  <p id="errorMsg">Invalid login ❌</p>
+</div>
+
+<!-- USERS PANEL -->
+<div id="usersPanel">
+  <h2>All Registered Users</h2>
+  <div id="usersList"></div>
+</div>
+
+<script>
+/* ===== DEV CREDENTIALS ===== */
+const DEV_EMAIL = "HAHA";
+const DEV_PASS = "HAHA";
+
+/* ===== JSON BIN CONFIG ===== */
+const JSON_BIN_ID = "68d5789ed0ea881f408ad215";
+const MASTER_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
+
+/* ===== LOGIN ===== */
+function login() {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  if(email === DEV_EMAIL && pass === DEV_PASS){
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("usersPanel").style.display = "block";
+    loadUsers();
+  } else {
+    document.getElementById("errorMsg").style.display = "block";
+  }
+}
+
+/* ===== LOAD USERS ===== */
+async function loadUsers(){
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}/latest`, {
+      headers: { "X-Master-Key": MASTER_KEY }
+    });
+    const data = await res.json();
+    const users = data.record.users || [];
+    renderUsers(users);
+  } catch(err){
+    console.error("Error fetching users:", err);
+  }
+}
+
+/* ===== RENDER USERS ===== */
+function renderUsers(users){
+  const list = document.getElementById("usersList");
+  list.innerHTML = "";
+  users.forEach((u, i) => {
+    const div = document.createElement("div");
+    div.className = "user-block";
+    div.innerHTML = `
+      <p><b>${i+1}. ${u.Name}</b></p>
+      <p>Class: ${u.Class}</p>
+      <p>Number: ${u.Number}</p>
+      <p>Password: ${u.Password}</p>
+      <p>Date of Join: ${u.DateOfJoin}</p>
+      <p>Role: ${u.Role}</p>
+    `;
+    list.appendChild(div);
+  });
+}
+</script>
+
+</body>
+</html>

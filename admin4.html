@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier Institute - User Data</title>
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  position: relative;
+}
+.container {
+  width: 100%;
+  max-width: 700px;
+}
+h1 {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 30px;
+}
+.user-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+.user-card h2 {
+  margin: 0 0 10px;
+  color: #003366;
+}
+.user-card p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+.user-card label {
+  font-weight: bold;
+}
+.role-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.save-btn {
+  margin-top: 10px;
+  background: #3b82f6;
+  color: #fff;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.save-btn:hover {
+  background: #2563eb;
+}
+
+/* Lights */
+.light {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  position: absolute;
+  top: 20px;
+  opacity: 0.3;
+  transition: opacity 0.6s, box-shadow 0.6s;
+}
+.light.active {
+  opacity: 1;
+  box-shadow: 
+    0 0 15px currentColor,
+    0 0 30px currentColor,
+    0 0 60px currentColor,
+    0 0 100px currentColor;
+}
+#lightRed { left: 20px; background: red; color:red; }
+#lightGreen { right: 20px; background: green; color:green; }
+</style>
+</head>
+<body>
+
+<!-- Lights -->
+<div id="lightRed" class="light"></div>
+<div id="lightGreen" class="light"></div>
+
+<div class="container">
+  <h1>Premier Institute</h1>
+  <div id="usersList"></div>
+</div>
+
+<script>
+const JSON_BIN_ID = "68d5789ed0ea881f408ad215";
+const MASTER_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
+
+// === Fetch and Display Users ===
+async function loadUsers() {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}`, {
+      headers: { "X-Master-Key": MASTER_KEY }
+    });
+    const data = await response.json();
+    const users = data.record.users || [];
+    renderUsers(users);
+  } catch (err) {
+    console.error("Error fetching user data:", err);
+  }
+}
+
+// === Render User Cards ===
+function renderUsers(users) {
+  const container = document.getElementById("usersList");
+  container.innerHTML = "";
+  users.forEach((user, index) => {
+    const card = document.createElement("div");
+    card.className = "user-card";
+    card.innerHTML = `
+      <h2>${user.Name}</h2>
+      <p><label>Class:</label> ${user.Class}</p>
+      <p><label>Date of Join:</label> ${user.DateOfJoin}</p>
+      <p><label>Role:</label></p>
+      <input type="text" class="role-input" value="${user.Role}" id="role-${index}">
+      <button class="save-btn" onclick="saveRole(${index})">Save Role</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// === Save Role to JSONBin ===
+async function saveRole(index) {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}`, {
+      headers: { "X-Master-Key": MASTER_KEY }
+    });
+    const data = await response.json();
+    const users = data.record.users || [];
+    
+    // update role
+    const newRole = document.getElementById(`role-${index}`).value;
+    users[index].Role = newRole;
+
+    // send update
+    await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": MASTER_KEY
+      },
+      body: JSON.stringify({ users })
+    });
+
+    alert("Role updated successfully!");
+  } catch (err) {
+    console.error("Error saving role:", err);
+    alert("Failed to update role.");
+  }
+}
+
+// === Lights toggle ===
+let toggle = true;
+function toggleLights() {
+  document.getElementById("lightRed").classList.toggle("active", toggle);
+  document.getElementById("lightGreen").classList.toggle("active", !toggle);
+  toggle = !toggle;
+}
+
+// Init
+window.addEventListener('load', () => {
+  loadUsers();
+  toggleLights();
+  setInterval(() => {
+    loadUsers();
+    toggleLights();
+  }, 10000);
+});
+</script>
+</body>
+</html>

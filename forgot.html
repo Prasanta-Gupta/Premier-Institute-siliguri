@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Premier Institute — Forgot Password</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root{
+    --blue:#003366;
+    --accent:#66a6ff;
+    --bg1:#27BBF5;
+    --bg2:#f2f6f8;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter, system-ui, Arial, Helvetica, sans-serif;
+    background: linear-gradient(180deg,var(--bg1),var(--bg2));
+    color:var(--blue);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  .card{
+    width:100%;
+    max-width:520px;
+    background:#BBE9FC;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    padding:28px;
+    position:relative;
+    z-index:2;
+  }
+
+  header h1{ margin:0; font-size:22px; color:var(--blue); }
+  .note{ font-size:12px; color:#666; margin-top:6px; }
+
+  form{ margin-top:18px; display:flex; flex-direction:column; gap:12px; }
+
+  label{ font-size:13px; color:#234; font-weight:600; }
+  input, select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid #d8dce0;
+    font-size:14px;
+    outline:none;
+    background:#fcfeff;
+  }
+  input:focus, select:focus{
+    box-shadow:0 4px 14px rgba(102,166,255,0.16);
+    border-color:var(--accent);
+  }
+  .hint { font-size:12px; color:#777; margin-top:4px; }
+
+  .submit-btn{
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    padding:12px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .submit-btn:active{ transform:translateY(1px) }
+  .submit-btn[disabled]{ opacity:.6; cursor:default }
+
+  .status{ margin-top:12px; font-size:14px; color:var(--blue); display:none; }
+  .small-muted { font-size:12px; color:#666; margin-top:6px; text-align:center; }
+
+  /* Improved ban overlay: white block with black text */
+  .ban-overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    padding:20px;
+    background:rgba(0,0,0,0.3);
+  }
+  .ban-card{
+    background:#fff;
+    color:#000;
+    border-radius:12px;
+    padding:24px;
+    max-width:400px;
+    text-align:center;
+    box-shadow:0 6px 20px rgba(0,0,0,0.15);
+  }
+  .ban-card h2{ margin:0 0 12px; font-size:22px; }
+  .ban-card p{ font-size:16px; line-height:1.4; }
+  .ban-card input{
+    margin-top:12px;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    font-size:14px;
+    width:100%;
+    text-align:center;
+  }
+  .ban-card button{
+    margin-top:12px;
+    padding:10px 16px;
+    border:none;
+    border-radius:6px;
+    background:var(--accent);
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
+    width:100%;
+  }
+
+  @media (max-width:420px){
+    .card{ padding:18px; border-radius:12px; }
+    .ban-card{ padding:18px; }
+  }
+</style>
+</head>
+<body>
+  <div class="card" role="main">
+    <header>
+      <h1>Premier Institute</h1>
+      <div class="note">Fake or spam requests can lead to permanent account suspension</div>
+    </header>
+
+    <form id="forgotForm" onsubmit="return handleSubmit(event)">
+      <div>
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" placeholder="Your name" required />
+        <div class="hint">Will be saved locally for future convenience.</div>
+      </div>
+
+      <div>
+        <label for="class">Class</label>
+        <select id="class" name="class" required>
+          <option value="">Select class</option>
+          <option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
+          <option>9</option><option>10</option><option>11</option><option>12</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="number">Number</label>
+        <input id="number" name="number" type="text" placeholder="10 digit mobile number" required />
+        <div class="hint">Enter number exactly as you used during signup (saved locally).</div>
+      </div>
+
+      <div class="small-muted">After submitting, admin will manually issue a new password and send it to you.</div>
+
+      <button id="submitBtn" class="submit-btn" type="submit">Submit</button>
+      <div id="status" class="status" role="status"></div>
+    </form>
+  </div>
+
+  <div id="banOverlay" class="ban-overlay" style="display:none;">
+    <div class="ban-card">
+      <h2>You are banned</h2>
+      <p id="banMsg">Banned for 7 days due to spamming requests</p>
+      <input type="password" id="unbanPass" placeholder="Enter password" />
+      <button onclick="tryUnban()">Unban</button>
+    </div>
+  </div>
+
+<script>
+  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1421051311012581398/vXpnuV__MgPYlsBq9kz6P4OSBNxFdq5cqYgoN07eobfh2P5EWVEkO_AoXv95HIBuK9L1";
+  const CURRENT_USER_KEY = "currentUser";
+  const USER_CLASS_KEY = "userClass";
+  const REQUEST_LOG_KEY = "requestTimestamps";
+  const BAN_KEY = "USERBANED";
+  const BAN_DURATION = 7 * 24 * 60 * 60 * 1000;
+
+  const form = document.getElementById("forgotForm");
+  const submitBtn = document.getElementById("submitBtn");
+  const statusEl = document.getElementById("status");
+  const banOverlay = document.getElementById("banOverlay");
+  const banMsg = document.getElementById("banMsg");
+  const unbanPass = document.getElementById("unbanPass");
+
+  // Auto-fill from localStorage
+  (function autoFill(){
+    const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY) || "null");
+    if(saved){
+      document.getElementById("name").value = saved.Name || "";
+      document.getElementById("class").value = saved.Class || "";
+      document.getElementById("number").value = saved.Number || "";
+    }
+  })();
+
+  // Check ban on load
+  (function checkBan(){
+    const banData = JSON.parse(localStorage.getItem(BAN_KEY) || "null");
+    if(banData && Date.now() < banData.expires){
+      showBanOverlay(banData.expires);
+    } else {
+      localStorage.removeItem(BAN_KEY);
+    }
+  })();
+
+  function showBanOverlay(expiry){
+    const remaining = expiry - Date.now();
+    const days = Math.ceil(remaining / (1000*60*60*24));
+    banMsg.textContent = `Banned for ${days} day(s).`;
+    banOverlay.style.display = "flex";
+    submitBtn.disabled = true;
+  }
+
+  function tryUnban(){
+    if(unbanPass.value === "GUPTA"){
+      localStorage.removeItem(BAN_KEY);
+      banOverlay.style.display = "none";
+      submitBtn.disabled = false;
+      alert("Unbanned successfully");
+    } else {
+      alert("Wrong password. Ask admin for unban.");
+    }
+  }
+
+  function logRequest(){
+    let log = JSON.parse(localStorage.getItem(REQUEST_LOG_KEY) || "[]");
+    const now = Date.now();
+    log.push(now);
+    log = log.filter(t => now - t < BAN_DURATION);
+    localStorage.setItem(REQUEST_LOG_KEY, JSON.stringify(log));
+    return log;
+  }
+
+  async function handleSubmit(e){
+    e.preventDefault();
+    if(localStorage.getItem(BAN_KEY)){
+      showBanOverlay(JSON.parse(localStorage.getItem(BAN_KEY)).expires);
+      return false;
+    }
+
+    const name = document.getElementById("name").value.trim();
+    const cls = document.getElementById("class").value.trim();
+    let number = document.getElementById("number").value.trim();
+
+    if(!name || !cls || !number){ showStatus("Please fill all fields.", true); return false; }
+    number = number.replace(/\D/g,'');
+    if(!/^[0-9]{10}$/.test(number)){ showStatus("Enter a valid 10-digit number.", true); return false; }
+
+    const currentUser = { Name:name, Class:cls, Number:number };
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+    localStorage.setItem(USER_CLASS_KEY, cls);
+
+    const logs = logRequest();
+    if(logs.length > 1){
+      const banData = { expires: Date.now() + BAN_DURATION };
+      localStorage.setItem(BAN_KEY, JSON.stringify(banData));
+      showBanOverlay(banData.expires);
+      return false;
+    }
+
+    const timestamp = new Date().toISOString();
+    const content = `**Forgot Password Request**\n> Name: ${name}\n> Class: ${cls}\n> Number: ${number}\n> Time: ${timestamp}`;
+    submitBtn.disabled = true;
+    showStatus("Sending request... Please wait.", false);
+
+    try{
+      const res = await fetch(DISCORD_WEBHOOK,{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({content})
+      });
+      if(res.ok || res.status===204){
+        showStatus("Request sent — admin will assign a new password manually.", false);
+      }else{
+        showStatus("Failed to send request. Try again. ("+res.status+")", true);
+      }
+    }catch(err){
+      showStatus("Network failed. Please try again later.", true);
+    }finally{
+      submitBtn.disabled = false;
+    }
+  }
+
+  function showStatus(msg,isError=false){
+    statusEl.style.display="block";
+    statusEl.style.color=isError?"#b00020":"var(--blue)";
+    statusEl.textContent=msg;
+  }
+</script>
+</body>
+</html>

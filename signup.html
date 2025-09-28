@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premier Institute - Signup</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      color: #222;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 35px;
+      border-radius: 18px;
+      width: 360px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 5px;
+      font-size: 28px;
+      color: #003366;
+    }
+    h2 {
+      margin: 0;
+      font-size: 14px;
+      color: #0066cc;
+      font-weight: bold;
+    }
+    p.motto {
+      margin: 12px 0 22px;
+      font-size: 14px;
+      color: #444;
+      font-style: italic;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 14px;
+    }
+    input:focus {
+      border-color: #66a6ff;
+      box-shadow: 0 0 5px rgba(102,166,255,0.6);
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #66a6ff;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #0056d6;
+    }
+    .loading {
+      display: none;
+      margin-top: 18px;
+      font-size: 14px;
+      color: #003366;
+      font-weight: bold;
+    }
+    .bubble {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #66a6ff;
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: bounce 1s infinite;
+    }
+    .bubble:nth-child(2) { animation-delay: 0.2s; }
+    .bubble:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* 🔹 Error Slide-in Message */
+    .error-message {
+      position: fixed;
+      top: 20px;
+      right: -350px;
+      background: #ff4d4d;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px 0 0 10px;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: right 0.5s ease-in-out;
+      z-index: 1000;
+    }
+    .error-message.show {
+      right: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Premier Institute</h1>
+    <h2>By PRASHANT GUPTA</h2>
+    <p class="motto">Empowering education with dedication and innovation.</p>
+
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="text" id="class" placeholder="Class" required>
+    <input type="text" id="number" placeholder="Number (10 digits)" required>
+    <input type="password" id="password" placeholder="Set Password" required>
+    <button onclick="signup()">Sign Up</button>
+
+    <div class="loading" id="loading">
+      Signing up
+      <span class="bubble"></span>
+      <span class="bubble"></span>
+      <span class="bubble"></span>
+    </div>
+  </div>
+
+  <!-- 🔹 Error Popup -->
+  <div id="errorBox" class="error-message"></div>
+
+  <script>
+    const JSON_BIN_ID = "68d5789ed0ea881f408ad215";  
+    const MASTER_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";  
+
+    function showError(message) {
+      const errorBox = document.getElementById("errorBox");
+      errorBox.textContent = message;
+      errorBox.classList.add("show");
+      setTimeout(() => {
+        errorBox.classList.remove("show");
+      }, 3000);
+    }
+
+    async function signup() {
+      const name = document.getElementById("name").value.trim();
+      const cls = document.getElementById("class").value.trim();
+      const number = document.getElementById("number").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!name || !cls || !number || !password) {
+        showError("⚠️ All fields are required!");
+        return;
+      }
+
+      // 🔹 Number validation
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(number)) {
+        showError("⚠️ Enter a valid 10-digit number (without +91).");
+        return;
+      }
+
+      const userData = {
+        Name: name,
+        Class: cls,
+        Number: "+91" + number,
+        Password: password,
+        DateOfJoin: new Date().toISOString().split("T")[0],
+        Role: "N/A"
+      };
+
+      // Save in localStorage so user stays logged in
+      localStorage.setItem("currentUser", JSON.stringify(userData));
+      document.getElementById("loading").style.display = "block";
+
+      try {
+        // Get current JSON data
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}/latest`, {
+          headers: { "X-Master-Key": MASTER_KEY }
+        });
+        let data = await response.json();
+
+        if (!data.record || !Array.isArray(data.record.users)) {
+          data = { record: { users: [] } };
+        }
+
+        // Add user
+        data.record.users.push(userData);
+
+        // Update JSON bin
+        await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": MASTER_KEY
+          },
+          body: JSON.stringify({ users: data.record.users })
+        });
+
+        setTimeout(() => {
+          document.getElementById("loading").style.display = "none";
+          window.location.href = "page1.html";
+        }, 1500);
+
+      } catch (err) {
+        console.error("Error saving data:", err);
+        showError("❌ Signup failed. Please try again.");
+        document.getElementById("loading").style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>

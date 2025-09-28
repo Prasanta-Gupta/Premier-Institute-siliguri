@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier Institute — Suggestions</title>
+<style>
+/* ===== Professional Theme ===== */
+body {
+  margin:0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background:#f5f7fa;
+  color:#222;
+  line-height:1.6;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:30px 15px;
+}
+
+h1 {
+  font-size:28px;
+  margin-bottom:25px;
+  font-weight:700;
+  color:#1a237e;
+  text-align:center;
+}
+
+.block {
+  background:#fff;
+  border-radius:12px;
+  padding:25px;
+  width:95%;
+  max-width:650px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.1);
+  margin-bottom:25px;
+  border:1px solid #e0e0e0;
+}
+
+.block h2 {
+  margin-bottom:15px;
+  font-size:22px;
+  color:#0d47a1;
+  text-align:left;
+  border-left:5px solid #2196f3;
+  padding-left:10px;
+}
+
+label {
+  display:block;
+  margin:12px 0 6px;
+  font-weight:600;
+  color:#333;
+}
+
+input, select, textarea {
+  width:100%;
+  padding:12px;
+  border:1px solid #bbb;
+  border-radius:6px;
+  font-size:15px;
+  transition:border 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:#2196f3;
+  outline:none;
+}
+textarea { resize:vertical; }
+
+button {
+  margin-top:18px;
+  padding:12px;
+  width:100%;
+  background:#1976d2;
+  border:none;
+  border-radius:6px;
+  color:white;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background 0.3s;
+}
+button:hover { background:#0d47a1; }
+
+/* Slide-in Message */
+.message {
+  position:fixed;
+  top:20px;
+  left:-100%;
+  padding:15px 20px;
+  border-radius:6px;
+  font-weight:600;
+  color:#fff;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  transition:left 0.6s ease;
+  z-index:999;
+}
+.message.show { left:20px; }
+.message.success { background:#4caf50; }
+.message.error { background:#f44336; }
+</style>
+</head>
+<body>
+
+<h1>Premier Institute</h1>
+
+<div class="block">
+  <h2>Suggestions</h2>
+  <p>Please share your suggestions. We value your input.Do not try to our-smart the system we prepared for everything and only accept the suggestion with vaild reasons</p>
+
+  <form id="suggestionForm">
+    <label>Name (Optional)</label>
+    <input type="text" name="Name">
+
+    <label>You are?</label>
+    <select name="Role" required>
+      <option value="">Select</option>
+      <option>Student</option>
+      <option>Teacher</option>
+      <option>Visitor</option>
+      <option>Admin</option>
+    </select>
+
+    <label>Type your suggestion</label>
+    <textarea name="Suggestion" rows="6" maxlength="1000" required></textarea>
+
+    <button type="submit">Submit Suggestion</button>
+  </form>
+</div>
+
+<!-- Slide-in Messages -->
+<div id="msgBox" class="message"></div>
+
+<script>
+// ===== FORM SUBMIT TO DISCORD WEBHOOK =====
+const form = document.getElementById("suggestionForm");
+const msgBox = document.getElementById("msgBox");
+
+form.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const formData = new FormData(this);
+  let message = "**💡 New Suggestion Received**\n\n";
+  formData.forEach((v,k)=> message += `**${k}:** ${v}\n`);
+
+  fetch("https://discord.com/api/webhooks/1421051311012581398/vXpnuV__MgPYlsBq9kz6P4OSBNxFdq5cqYgoN07eobfh2P5EWVEkO_AoXv95HIBuK9L1", { 
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ content: message })
+  }).then(res=>{
+    showMessage("✅ Suggestion submitted successfully!", "success");
+    this.reset();
+  }).catch(err=>{
+    showMessage("❌ Error sending suggestion!", "error");
+    console.error(err);
+  });
+});
+
+// ===== SHOW MESSAGE FUNCTION =====
+function showMessage(text, type){
+  msgBox.textContent = text;
+  msgBox.className = `message ${type} show`;
+  setTimeout(()=> { msgBox.classList.remove("show"); }, 4000);
+}
+</script>
+
+</body>
+</html>

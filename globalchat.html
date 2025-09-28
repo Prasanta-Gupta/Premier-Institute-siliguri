@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier Chat</title>
+<style>
+/* ==== GLOBAL THEME ==== */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #1e3a8a, #60a5fa);
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ==== HEADER ==== */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background:#075E9C ;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: 1px;
+  position: relative;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+.menu {
+  position: absolute;
+  left: 10px;
+  cursor: pointer;
+  font-size: 22px;
+  color: #cbd5e1;
+  transition: color 0.3s;
+}
+.menu:hover { color: #fff; }
+
+/* ==== NAME BOX ==== */
+#nameEditBox {
+  display: none;
+  position: absolute;
+  top: 50px;
+  left: 10px;
+  background: #f1f5f9;
+  border: 1px solid #93c5fd;
+  border-radius: 10px;
+  padding: 14px;
+  width: 220px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+#nameEditBox label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+  color: #111;
+}
+#nameEditBox input {
+  width: 100%;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #93c5fd;
+  border-radius: 6px;
+  color: #111;
+}
+#nameEditBox button {
+  margin-top: 8px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+#nameEditBox button:hover { background: #1d4ed8; }
+
+/* ==== CHAT BOX ==== */
+#chatContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb #dbeafe;
+}
+#chatContainer::-webkit-scrollbar { width: 6px; }
+#chatContainer::-webkit-scrollbar-thumb { background: #2563eb; }
+
+/* ==== MESSAGES ==== */
+.message {
+  background: #f9fafb;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  max-width: 75%;
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.message.self {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  margin-left: auto;
+  color: #fff;
+}
+.message.moderation {
+  background: #fde68a;
+  border-left: 4px solid #f59e0b;
+  color: #111;
+}
+.message.system {
+  background: #e0f2fe;
+  font-style: italic;
+  color: #1e3a8a;
+}
+.meta {
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+/* ==== FORM ==== */
+form {
+  display: flex;
+  padding: 10px;
+  background: #1e40af;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+}
+form input {
+  flex: 1;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #93c5fd;
+  border-radius: 8px;
+  color: #111;
+}
+form button {
+  margin-left: 10px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+form button:hover { background: #1d4ed8; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="menu" onclick="toggleNameBox()">⋮</div>
+  Premier Chat
+</header>
+
+<div id="nameEditBox">
+  <label>Enter Name:</label>
+  <input type="text" id="newName" maxlength="20">
+  <button onclick="updateName()">Save</button>
+</div>
+
+<div id="chatContainer"></div>
+
+<form id="chatForm">
+  <input type="text" id="msgInput" placeholder="Type a message..." required>
+  <button type="submit">Send</button>
+</form>
+
+<script>
+/* ==== CONFIG ==== */
+const BIN_ID = "68d681d743b1c97be950e084";
+const MASTER_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
+const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const BAD_WORDS = ["baap","🖕","f4ck","nigg@","fuck","shit","nigga","madharchod","bhenchod","randi","chut","land"];
+const FORBIDDEN_NAMES = ["prashant","prasanta","s4tyam","satyam","admin"];
+
+/* ==== LOGIN DATA ==== */
+let username = localStorage.getItem("chatUsername");
+let lastNameChange = localStorage.getItem("lastNameChange") ? parseInt(localStorage.getItem("lastNameChange")) : null;
+
+/* ==== INIT ==== */
+async function init() {
+  if(!username) {
+    username = askName();
+    localStorage.setItem("chatUsername", username);
+    lastNameChange = Date.now();
+    localStorage.setItem("lastNameChange", lastNameChange);
+    await postSystemMessage(`${username} joined the chat`);
+  }
+  loadMessages();
+  setInterval(loadMessages, 5000);
+}
+
+/* ==== ASK NAME ==== */
+function askName() {
+  let name;
+  while(true) {
+    name = prompt("Enter your name:") || "Anonymous";
+    name = name.trim();
+    if(validateName(name)) break;
+    alert("Invalid or forbidden name. Use only letters/numbers, no symbols/emojis. Forbidden names not allowed.");
+  }
+  return name;
+}
+
+/* ==== VALIDATE NAME ==== */
+function validateName(name) {
+  if(!/^[A-Za-z0-9]+$/.test(name)) return false;
+  if(FORBIDDEN_NAMES.includes(name.toLowerCase())) return false;
+  return true;
+}
+
+/* ==== LOAD ==== */
+async function loadMessages() {
+  const res = await fetch(API_URL, { headers: { "X-Master-Key": MASTER_KEY } });
+  const data = await res.json();
+  let messages = data.record.messages || [];
+
+  const now = Date.now();
+  messages = messages.filter(m => (now - new Date(m.timestamp).getTime()) < 600000);
+
+  if(messages.length > 50) {
+    countdownClear();
+    return;
+  }
+
+  renderMessages(messages);
+  await saveMessages(messages);
+}
+
+/* ==== RENDER ==== */
+function renderMessages(msgs) {
+  const box = document.getElementById("chatContainer");
+  box.innerHTML = "";
+  msgs.forEach(m => {
+    const div = document.createElement("div");
+    let cls = "message";
+    if(m.user === "System") cls += " system";
+    if(m.user === username) cls += " self";
+    if(m.user === "Moderation") cls += " moderation";
+    div.className = cls;
+    div.innerHTML = `<div class="meta">${m.user} • ${new Date(m.timestamp).toLocaleTimeString()}</div>${m.text}`;
+    box.appendChild(div);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+
+/* ==== SAVE ==== */
+async function saveMessages(msgs) {
+  await fetch(API_URL, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY },
+    body: JSON.stringify({ messages: msgs })
+  });
+}
+
+/* ==== SEND ==== */
+document.getElementById("chatForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const text = document.getElementById("msgInput").value.trim();
+  if(!text) return;
+
+  if(BAD_WORDS.some(bw => text.toLowerCase().includes(bw))) {
+    await postModerationMessage("⚠️ Moderation: Bad word detected, message deleted.");
+    document.getElementById("msgInput").value="";
+    return;
+  }
+
+  const res = await fetch(API_URL, { headers: { "X-Master-Key": MASTER_KEY } });
+  const data = await res.json();
+  const msgs = data.record.messages || [];
+  msgs.push({ user: username, text, timestamp: new Date().toISOString() });
+  await saveMessages(msgs);
+  document.getElementById("msgInput").value="";
+});
+
+/* ==== SYSTEM ==== */
+async function postSystemMessage(txt) {
+  const res = await fetch(API_URL, { headers: { "X-Master-Key": MASTER_KEY } });
+  const data = await res.json();
+  const msgs = data.record.messages || [];
+  msgs.push({ user:"System", text:txt, timestamp:new Date().toISOString() });
+  await saveMessages(msgs);
+}
+
+/* ==== MODERATION ==== */
+async function postModerationMessage(txt) {
+  const res = await fetch(API_URL, { headers: { "X-Master-Key": MASTER_KEY } });
+  const data = await res.json();
+  const msgs = data.record.messages || [];
+  msgs.push({ user:"Moderation", text:txt, timestamp:new Date().toISOString() });
+  await saveMessages(msgs);
+}
+
+/* ==== CLEAR ==== */
+async function countdownClear() {
+  for(let i=3;i>0;i--) {
+    await postSystemMessage(`Clearing messages in ${i}`);
+    await new Promise(r=>setTimeout(r,1000));
+  }
+  await saveMessages([]);
+  await postSystemMessage("Chat Cleared = 0");
+}
+
+/* ==== NAME MENU ==== */
+function toggleNameBox() {
+  document.getElementById("nameEditBox").style.display="block";
+}
+async function updateName() {
+  const newName = document.getElementById("newName").value.trim();
+  if(!newName) return;
+  if(!validateName(newName)) {
+    alert("Invalid or forbidden name.");
+    return;
+  }
+  if(lastNameChange && (Date.now()-lastNameChange)<604800000) {
+    alert("You can only change name once per week!");
+    return;
+  }
+  username = newName;
+  localStorage.setItem("chatUsername", username);
+  lastNameChange = Date.now();
+  localStorage.setItem("lastNameChange", lastNameChange);
+  await postSystemMessage(`${username} changed their name`);
+  document.getElementById("nameEditBox").style.display="none";
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier Institute</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+body {
+  margin:0; font-family: Arial,sans-serif; background: linear-gradient(135deg, #fdfbfb, #ADD8E6); color:#0972C8;
+  min-height:100vh;
+}
+header {
+  padding:15px 20px; font-size:22px; font-weight:bold; display:flex; align-items:center;
+  position:fixed; top:0; left:0; width:100%; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.15); z-index:1001; border-radius:0 0 20px 20px;
+}
+.menu-btn { display:flex; flex-direction:column; justify-content:space-between; width:30px; height:22px; margin-right:15px; cursor:pointer; border:none; background:none; }
+.menu-btn span { display:block; height:4px; background:#003366; border-radius:2px; }
+
+.side-menu {
+  height:100%; width:0; position:fixed; top:0; left:0;
+  background:#fff; overflow-y:auto; transition:0.3s; box-shadow:2px 0 8px rgba(0,0,0,0.3); z-index:1002; padding-top:20px; border-radius:0 20px 20px 0;
+}
+.side-menu.open { width:250px; }
+.side-menu a { display:block; padding:12px 20px; font-size:15px; color:#003366; text-decoration:none; border-bottom:1px solid #eee; font-weight:bold; transition:0.3s; }
+.side-menu a:hover { background:#66a6ff; color:#fff; transform:translateX(5px); }
+.section-break { border-bottom:2px solid #66a6ff; margin:10px 0; }
+
+.overlay {
+  position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3);
+  opacity:0; visibility:hidden; transition:0.3s; z-index:1000;
+}
+.overlay.show { opacity:1; visibility:visible; }
+
+.container {
+  padding:100px 20px 40px 20px; max-width:900px; margin:0 auto; display:flex; flex-direction:column; gap:20px;
+}
+
+/* Block style */
+.block { background:#fff; padding:20px; border-radius:20px; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+.block h2 { margin:0 0 10px 0; color:#003366; font-size:18px; }
+
+/* Location buttons */
+.location-btn { display:inline-block; background: #e0f0ff; color:#003366; border:2px solid #003366; padding:10px 15px; margin:5px; border-radius:12px; text-decoration:none; font-weight:bold; transition:0.3s; }
+.location-btn:hover { background:#66a6ff; color:#fff; transform:translateY(-2px); }
+
+/* Subjects */
+.subjects { display:flex; flex-wrap:wrap; gap:10px; }
+.subject { flex:1 1 100px; background:#e0f0ff; border:2px solid #003366; padding:12px; text-align:center; border-radius:12px; font-weight:bold; color:#003366; }
+
+/* Notice block */
+.notice-block { background:#f0f8ff; border-left:4px solid #003366; padding:15px 20px; margin-bottom:15px; border-radius:12px; }
+.notice-block h3 { margin:0 0 5px 0; color:#003366; font-size:16px; }
+.notice-block p { margin:0; color:#003366; font-size:14px; }
+.notice-block small { display:block; margin-top:5px; color:#003366; }
+
+/* Footer */
+footer { text-align:center; margin-top:30px; font-weight:bold; color:#003366; }
+
+/* Boards Marquee */
+.boards-marquee {
+  background:#f0f8ff; border:2px solid #003366; padding:8px; border-radius:12px; overflow:hidden; white-space:nowrap;
+}
+.boards-marquee span {
+  display:inline-block; padding-left:100%; animation:scroll-left 15s linear infinite; font-weight:bold; color:#003366;
+}
+@keyframes scroll-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* Ban Overlay */
+.ban-overlay{
+  position:fixed; inset:0; background: rgba(0,4,0,0.8); display:flex; justify-content:center; align-items:center; z-index:9999; backdrop-filter: blur(4px); display:none;
+}
+.ban-card{
+  background: linear-gradient(145deg,#CC6B6B,#FFD93D); padding: 28px; border-radius:16px; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width:360px; width:100%; color:#fff; font-family: Arial,sans-serif;
+}
+.ban-card h2{ margin:0 0 12px; font-size:24px; }
+.ban-card p{ margin:0 0 20px; font-size:16px; }
+.ban-card input{ width:100%; padding:10px; border:none; border-radius:8px; margin-bottom:12px; font-size:14px; text-align:center; }
+.ban-card button{ padding:10px 16px; border:none; border-radius:8px; background:#003366; color:#fff; font-weight:600; cursor:pointer; transition:0.2s; }
+.ban-card button:hover{ background:#001f4d; }
+</style>
+</head>
+<body>
+
+<div id="overlay" class="overlay" onclick="closeMenu()"></div>
+
+<header>
+  <button class="menu-btn" onclick="openMenu()"><span></span><span></span><span></span></button>
+  Premier Institute
+</header>
+
+<div id="sideMenu" class="side-menu">
+  <a href="javascript:void(0)" onclick="closeMenu()">Close </a>
+  <a href="profile.html"><i class="fa fa-user"></i> Profile</a>
+  <a href="signup.html"><i class="fa fa-user-plus"></i> Sign Up</a>
+  <a href="forgot.html"><i class="fa fa-key"></i> Forgot</a>
+  <div class="section-break"></div>
+  <a href="aboutus.html"><i class="fa fa-home"></i> About us</a>
+  <a href="teachers.html"><i class="fa fa-list view"></i> Teachers</a>
+  <a href="Fee.html"><i class="fa fa-bank"></i> Fees & Others</a>
+  <div class="section-break"></div>
+  <a href="globalchat.html"><i class="fa fa-comment"></i> Global Chat</a>
+  <a href="ai.html"><i class="fa fa-smile"></i> Premier AI</a>
+  <a href="review.html"><i class="fa fa-heart"></i> Reviews</a>
+  <a href="suggest.html"><i class="fa fa-envelope"></i> Suggestion</a>
+  <div class="section-break"></div>
+  <a href="adminpanel.html"><i class="fa fa-lock"></i> Admin</a>
+  
+  <a href="dev.html"><i class="fa fa-cogs"></i> Developer</a>
+</div>
+
+<div class="container">
+
+  <!-- Locations -->
+  <div class="block">
+    <h2>Locations</h2>
+    <a href="https://maps.app.goo.gl/GEcb52XqST3BcvxT8" target="_blank" class="location-btn">BabuPara</a>
+    <a href="https://maps.app.goo.gl/QtxvMzKkW9fYyp4m9" target="_blank" class="location-btn">South Colony</a>
+  </div>
+
+  <!-- Boards -->
+  <div class="block">
+    <h2>Supported Boards</h2>
+    <div class="boards-marquee">
+      <span>CBSE -&nbsp; ICSE -&nbsp; ISE -&nbsp; WBBSE -&nbsp; WBCHSE -&nbsp; NIOS -&nbsp; IGNOU &nbsp;</span>
+    </div>
+  </div>
+
+  <!-- Class Selection -->
+  <div class="block">
+    <h2>Your Class?</h2>
+    <select id="classSelect" onchange="saveClass()">
+      <option value="">Select</option>
+      <option value="4">Class 4</option>
+      <option value="5">Class 5</option>
+      <option value="6">Class 6</option>
+      <option value="7">Class 7</option>
+      <option value="8">Class 8</option>
+      <option value="9">Class 9</option>
+      <option value="10">Class 10</option>
+      <option value="11">Class 11</option>
+      <option value="12">Class 12</option>
+    </select>
+  </div>
+
+  <!-- Subjects -->
+  <div class="block">
+    <h2>Subjects for Class <span id="showClass">-</span></h2>
+    <div class="subjects" id="subjectList"></div>
+  </div>
+
+  <!-- Notices -->
+  <div class="block" id="noticeContainer">
+    <h2>Notices</h2>
+  </div>
+
+  <!-- User Name -->
+  <footer id="userName"></footer>
+</div>
+
+
+
+<script>
+function openMenu(){ document.getElementById("sideMenu").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
+function closeMenu(){ document.getElementById("sideMenu").classList.remove("open"); document.getElementById("overlay").classList.remove("show"); }
+
+// Class selection
+const classSelect = document.getElementById("classSelect");
+const subjectList = document.getElementById("subjectList");
+const showClass = document.getElementById("showClass");
+
+function saveClass(){
+  const cls = classSelect.value;
+  localStorage.setItem("userClass", cls);
+  displaySubjects(cls);
+}
+function displaySubjects(cls){
+  showClass.textContent = cls || "-";
+  subjectList.innerHTML = "";
+  if(!cls) return;
+  let subjects = [];
+  if(cls >= 4 && cls <= 9){
+    subjects = ["Maths","Science","English","First Language","SST","History","Geography","Second Language"];
+  } else if(cls == 10){
+    subjects = ["English","Hindi","History","Geography","Maths","Science"];
+  } else if(cls == 11 || cls == 12){
+    subjects = ["English","Hindi","Political Science","History","Education","Home Science"];
+  }
+  subjects.forEach(sub=>{
+    const div = document.createElement("div"); div.className="subject"; div.textContent=sub; subjectList.appendChild(div);
+  });
+}
+const savedClass = localStorage.getItem("userClass");
+if(savedClass){ classSelect.value=savedClass; displaySubjects(savedClass); }
+
+// User Name
+const currentUser = JSON.parse(localStorage.getItem("currentUser")|| '{}');
+if(currentUser.Name) document.getElementById("userName").textContent = currentUser.Name;
+
+// Notices (JSON BIN)
+const JSON_BIN_ID = "68d580e243b1c97be94fe7eb";
+const MASTER_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
+async function loadNotices(){
+  try{
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}/latest`, { headers: {"X-Master-Key": MASTER_KEY}});
+    const data = await res.json();
+    const notices = data.record.notices || [];
+    const container = document.getElementById("noticeContainer");
+    notices.forEach(n=>{
+      const div = document.createElement("div"); div.className="notice-block";
+      div.innerHTML=`<h3>${n.id}</h3><p>${n.text}</p><small>By: ${n.by}</small>`;
+      container.appendChild(div);
+    });
+  } catch(err){ console.error("Failed to load notices:", err); }
+}
+loadNotices();
+
+// ==== BAN LOGIC ====
+const BAN_KEY = "USERBANED";
+
+function showBanOverlay(expiry){
+  const remainingDays = Math.ceil((expiry - Date.now()) / (1000*60*60*24));
+  document.getElementById("banMsg").textContent = `Banned for ${remainingDays} day(s)`;
+  document.getElementById("banOverlay").style.display = "flex";
+}
+
+(function checkBanOnLoad(){
+  const banData = JSON.parse(localStorage.getItem(BAN_KEY) || "null");
+  if(banData && Date.now() < banData.expires){
+    showBanOverlay(banData.expires);
+  } else {
+    localStorage.removeItem(BAN_KEY);
+  }
+})();
+
+function tryUnban(){
+  const pass = document.getElementById("unbanPass").value;
+  if(pass === "SATYAM"){
+    localStorage.removeItem(BAN_KEY);
+    document.getElementById("banOverlay").style.display = "none";
+    alert("✅ You are unbanned now.");
+  } else {
+    alert("❌ Wrong password. Ask Admin for password.");
+  }
+}
+</script>
+</body>
+</html>

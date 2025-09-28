@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premeir AI</title>
+<style>
+/* ===== Modern Professional Chat Theme ===== */
+body {
+  margin:0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: linear-gradient(135deg, #e3f2fd, #f5f7fa);
+  height:90vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* Animated Header */
+header {
+  background: linear-gradient(90deg, #1a237e, #1976d2);
+  color:#fff;
+  padding:20px;
+  text-align:center;
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:1px;
+  border-bottom-left-radius:20px;
+  border-bottom-right-radius:20px;
+  animation: slideDown 1s ease-out;
+  margin-bottom:10px;
+}
+@keyframes slideDown {
+  from { transform:translateY(-80px); opacity:0; }
+  to { transform:translateY(0); opacity:1; }
+}
+
+/* Chat Area */
+#chat {
+  flex:1;
+  padding:20px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* Messages */
+.msg {
+  max-width:75%;
+  padding:14px 18px;
+  border-radius:18px;
+  line-height:1.5;
+  font-size:16px;
+}
+.user {
+  align-self:flex-end;
+  background:#1976d2;
+  color:#fff;
+  border-bottom-right-radius:6px;
+}
+.bot {
+  align-self:flex-start;
+  background:#fff;
+  border:1px solid #e0e0e0;
+  border-bottom-left-radius:6px;
+  display:flex;
+  align-items:center;
+}
+.bot img {
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  margin-right:10px;
+}
+
+.typing {
+  font-style:italic;
+  color:#777;
+  margin:6px 0;
+  font-size:14px;
+}
+
+/* Footer Input */
+footer {
+  display:flex;
+  padding:10px;
+  background:#f1f3f6;
+  border-top:1px solid #ddd;
+}
+#input {
+  flex:1;
+  e this number to adjust height */
+  padding:30px 10px;
+  border:1px solid #bbb;
+  border-radius:20px;
+  font-size:15px;
+}
+
+button {
+  background:#1976d2;
+  color:white;
+  border:none;
+  border-radius:50%;
+  width:44px;
+  height:44px;
+  margin-left:10px;
+  cursor:pointer;
+  font-size:18px;
+  transition:background 0.3s;
+}
+button:hover { background:#0d47a1; }
+
+/* Settings Modal */
+#settings {
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+#settings .modal {
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  width:300px;
+}
+#settings label {
+  display:block;
+  margin-top:10px;
+  font-weight:600;
+}
+#settings input {
+  width:100%;
+  padding:8px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+#settings button {
+  margin-top:15px;
+  width:100%;
+  border-radius:6px;
+}
+</style>
+</head>
+<body>
+<header>Premeir AI</header>
+<div id="chat"></div>
+<footer>
+  <input id="input" placeholder="     Type a message.....">
+  <button onclick="sendMsg()"> ></button>
+</footer>
+
+<!-- Settings Modal -->
+<div id="settings">
+  <div class="modal">
+    <h3>Settings</h3>
+    <label>Your Name</label>
+    <input id="usernameInput" placeholder="Enter name">
+    <button onclick="saveSettings()">Save</button>
+  </div>
+</div>
+
+<script>
+const chat=document.getElementById("chat");
+const input=document.getElementById("input");
+const settings=document.getElementById("settings");
+let username=localStorage.getItem("username")||"User";
+
+/* Custom keyword-based responses */
+const customResponses = {
+  "hello": msg => `Hello ${username}, welcome to Premier Institute!`,
+  "hi": msg => `Hi ${username}, how can I assist you today?`,
+  "hey": msg => `Hey ${username}, ready to learn with Premier Institute?`,
+  "who are you": () => "I'm Primeir AI, here for Premier Institute.",
+  "who made you": () => "Created by experts for Premier Institute.",
+  "bye": () => "Goodbye! Visit Premier Institute again!",
+  "good morning": () => "Morning! Join our Babupara batch today!",
+  "good evening": () => "Evening! South Colony batch awaits you!",
+  "teacher": () => "Prashanta Gupta, 25+ years teaching experience.",
+  "tution name": () => "Premier Institute, top coaching in town.",
+  "location": () => "We’re in Babupara and South Colony.",
+  "batches": () => "Morning and evening batches available.",
+  "experience": () => "Prashanta Sir has 25+ years experience.",
+  "students": () => "Over 10,000 students taught successfully.",
+  "prashanta": () => "Prashanta Gupta, our expert teacher.",
+  "premier institute": () => "Premier Institute: quality education, proven results.",
+  "babupara": () => "Babupara branch offers great classes.",
+  "south colony": () => "South Colony has evening batches.",
+  "morning batch": () => "Morning batch starts early, join us!",
+  "evening batch": () => "Evening batch fits your schedule.",
+  "who teaches": () => "Prashanta Gupta, 25+ years experience.",
+  "how many students": () => "Over 10,000 students mentored.",
+  "where classes": () => "Classes in Babupara and South Colony.",
+  "batch timing": () => "Morning or evening, choose yours.",
+  "sir experience": () => "Prashanta Sir: 25+ years teaching.",
+  "institute name": () => "Premier Institute, trusted education hub.",
+  "contact": () => "Contact Admin +9679145745 Or Talk to sir directly +918617040060",
+  "tuition": () => "Premier Institute offers top coaching.",
+  "gupta sir": () => "Prashanta Gupta, expert with 25+ years.",
+  "class location": () => "Babupara or South Colony, pick one!",
+  "batch schedule": () => "Morning and evening batches daily.",
+  "student count": () => "10,000+ students taught by us.",
+  "teacher name": () => "Prashanta Gupta leads Premier Institute.",
+  "coaching": () => "Premier Institute: best in education.",
+  "where is institute": () => "In Babupara and South Colony.",
+  "class timings": () => "Morning or evening, flexible batches.",
+  "sir’s experience": () => "Prashanta Sir, 25+ years teaching.",
+  "how many taught": () => "Over 10,000 students mentored.",
+  "premier": () => "Premier Institute, trusted for excellence.",
+  "gupta": () => "Prashanta Gupta, 25+ years experience.",
+  "branch": () => "Branches in Babupara, South Colony.",
+  "batch time": () => "Morning or evening, join us!",
+  "education": () => "Premier Institute delivers quality education.",
+  "mentor": () => "Prashanta Gupta, mentor to 10,000+.",
+  "class place": () => "Classes in Babupara, South Colony.",
+  "schedule": () => "Morning/evening batches for flexibility.",
+  "experience sir": () => "Prashanta Sir, 25+ years expertise.",
+  "students taught": () => "10,000+ students, Premier Institute success.",
+  "institute": () => "Premier Institute, top learning center.",
+  "teacher info": () => "Prashanta Gupta, 25+ years teaching.",
+  "batch details": () => "Morning/evening batches, Babupara/South Colony.",
+  "locations": () => "Babupara and South Colony branches.",
+  "morning class": () => "Morning batch, start your day!",
+  "evening class": () => "Evening batch, learn after hours!",
+  "who is prashanta": () => "Prashanta Gupta, 25+ years teacher.",
+  "premier location": () => "Premier Institute in Babupara, South Colony.",
+  "batch info": () => "Morning/evening batches, flexible learning.",
+  "sir’s name": () => "Prashanta Gupta, expert educator.",
+  "student number": () => "Over 10,000 students taught.",
+  "coaching center": () => "Premier Institute, trusted coaching hub.",
+  "class schedule": () => "Morning or evening, flexible batches.",
+  "gupta experience": () => "Prashanta Gupta, 25+ years teaching.",
+  "institute branches": () => "Babupara and South Colony locations.",
+  "batch options": () => "Morning or evening, choose now!",
+  "teacher expertise": () => "Prashanta Sir, 25+ years expertise.",
+  "student success": () => "10,000+ students mentored successfully.",
+  "premier classes": () => "Premier Institute, quality education awaits.",
+  "gupta teacher": () => "Prashanta Gupta, mentor to thousands.",
+  "class branches": () => "Babupara and South Colony classes.",
+  "batch hours": () => "Morning or evening batch options.",
+  "sir’s expertise": () => "Prashanta Gupta, 25+ years teaching.",
+  "students mentored": () => "Over 10,000 students taught.",
+  "institute info": () => "Premier Institute, trusted for learning.",
+  "teacher details": () => "Prashanta Gupta, 25+ years experience.",
+  "batch availability": () => "Morning/evening batches, join today!",
+  "location details": () => "Babupara, South Colony branches open.",
+  "morning timing": () => "Morning batch, early learning session.",
+  "evening timing": () => "Evening batch, perfect for evenings.",
+  "prashanta gupta": () => "Prashanta Gupta, 25+ years teaching.",
+  "premier coaching": () => "Premier Institute, top coaching center.",
+  "class places": () => "Classes in Babupara, South Colony.",
+  "batch choices": () => "Morning or evening, flexible batches.",
+  "sir’s background": () => "Prashanta Gupta, 25+ years expertise.",
+  "student total": () => "10,000+ students mentored by us.",
+  "institute details": () => "Premier Institute, trusted education hub.",
+  "teacher profile": () => "Prashanta Gupta, expert educator.",
+  "batch timings": () => "Morning/evening batches for all.",
+  "branch locations": () => "Babupara, South Colony, Premier Institute.",
+  "morning classes": () => "Morning batch, start learning early!",
+  "evening classes": () => "Evening batch, learn after work!",
+  "gupta’s experience": () => "Prashanta Gupta, 25+ years teaching.",
+  "premier branches": () => "Babupara and South Colony locations.",
+  "class options": () => "Morning or evening, join us!",
+  "sir’s profile": () => "Prashanta Gupta, mentor to 10,000+.",
+  "student numbers": () => "Over 10,000 students taught.",
+  "coaching institute": () => "Premier Institute, quality education center.",
+  "class times": () => "Morning or evening batch options.",
+  "gupta’s expertise": () => "Prashanta Gupta, 25+ years teaching.",
+  "institute location": () => "Babupara, South Colony branches.",
+  "batch schedules": () => "Morning/evening batches, flexible timing.",
+  "teacher’s experience": () => "Prashanta Sir, 25+ years expertise.",
+  "students trained": () => "10,000+ students mentored successfully.",
+  "premier info": () => "Premier Institute, trusted for excellence.",
+  "gupta profile": () => "Prashanta Gupta, expert with 25+ years.",
+  "class locations": () => "Babupara and South Colony classes.",
+  "batch flexibility": () => "Morning or evening, choose yours!",
+  "sir’s teaching": () => "Prashanta Gupta, 25+ years experience.",
+  "student count total": () => "Over 10,000 students taught.",
+  "institute branches info": () => "Babupara, South Colony locations.",
+  "morning schedule": () => "Morning batch, early start learning.",
+  "evening schedule": () => "Evening batch, fits your evening.",
+  "prashanta’s experience": () => "Prashanta Gupta, 25+ years teaching.",
+  "premier education": () => "Premier Institute, top education hub.",
+  "class branch": () => "Babupara or South Colony classes.",
+  "batch time options": () => "Morning or evening, flexible batches.",
+  "teacher’s expertise": () => "Prashanta Gupta, 25+ years expertise.",
+  "students guided": () => "10,000+ students mentored by us.",
+  "institute overview": () => "Premier Institute, trusted coaching center.",
+  "gupta’s profile": () => "Prashanta Gupta, mentor to thousands.",
+  "class sites": () => "Babupara, South Colony class locations.",
+  "batch availability times": () => "Morning/evening batches, join now!",
+  "sir’s credentials": () => "Prashanta Gupta, 25+ years teaching.",
+  "student tally": () => "Over 10,000 students taught.",
+  "premier details": () => "Premier Institute, quality education hub.",
+  "teacher background": () => "Prashanta Gupta, expert educator.",
+  "batch options daily": () => "Morning or evening batches daily.",
+  "branch info": () => "Babupara, South Colony Premier branches.",
+  "morning batch time": () => "Morning batch, early learning start.",
+  "evening batch time": () => "Evening batch, learn after hours.",
+  "prashanta profile": () => "Prashanta Gupta, 25+ years teaching.",
+  "premier tuition": () => "Premier Institute, top coaching hub.",
+  "class venues": () => "Babupara and South Colony classes.",
+  "batch timing options": () => "Morning or evening, choose now!",
+  "sir’s knowledge": () => "Prashanta Gupta, 25+ years expertise.",
+  "student total count": () => "10,000+ students mentored successfully.",
+  "institute branch": () => "Babupara, South Colony locations open.",
+  "morning class time": () => "Morning batch, start your day!",
+  "evening class time": () => "Evening batch, perfect for evenings!",
+  "gupta’s background": () => "Prashanta Gupta, 25+ years teaching.",
+  "premier learning": () => "Premier Institute, trusted education center.",
+  "class areas": () => "Babupara, South Colony class branches.",
+  "batch daily options": () => "Morning or evening, flexible batches.",
+  "teacher’s credentials": () => "Prashanta Gupta, expert with 25+ years.",
+  "students educated": () => "Over 10,000 students taught.",
+  "institute summary": () => "Premier Institute, quality learning hub.",
+  "gupta credentials": () => "Prashanta Gupta, mentor to 10,000+.",
+  "class location details": () => "Babupara, South Colony branches.",
+  "batch schedule options": () => "Morning/evening batches, join today!",
+  "sir’s skills": () => "Prashanta Gupta, 25+ years teaching.",
+  "student overall count": () => "10,000+ students mentored by us.",
+  "premier overview": () => "Premier Institute, top coaching center.",
+  "teacher’s profile": () => "Prashanta Gupta, expert educator.",
+  "batch daily timing": () => "Morning or evening batch options.",
+  "branch details": () => "Babupara, South Colony class locations.",
+  "morning batch schedule": () => "Morning batch, early learning session.",
+  "evening batch schedule": () => "Evening batch, fits your evening.",
+  "prashanta’s expertise": () => "Prashanta Gupta, 25+ years teaching.",
+  "premier classes info": () => "Premier Institute, quality education awaits.",
+  "class branch locations": () => "Babupara and South Colony classes.",
+  "batch flexibility options": () => "Morning or evening, choose yours!",
+  "sir’s experience details": () => "Prashanta Gupta, 25+ years expertise.",
+  "student mentorship": () => "10,000+ students taught successfully.",
+  "institute education": () => "Premier Institute, trusted learning hub.",
+  "gupta’s teaching": () => "Prashanta Gupta, mentor to thousands.",
+  "class location info": () => "Babupara, South Colony Premier branches.",
+  "batch time choices": () => "Morning or evening, join now!",
+  "teacher’s skills": () => "Prashanta Gupta, 25+ years teaching.",
+  "students total": () => "Over 10,000 students mentored.",
+  "premier branch info": () => "Babupara, South Colony locations.",
+  "morning class schedule": () => "Morning batch, start learning early!",
+  "evening class schedule": () => "Evening batch, learn after hours!",
+  "prashanta credentials": () => "Prashanta Gupta, 25+ years expertise.",
+  "premier education hub": () => "Premier Institute, top coaching center.",
+  "class branch info": () => "Babupara, South Colony class locations.",
+  "batch daily schedule": () => "Morning or evening, flexible batches.",
+  "sir’s teaching experience": () => "Prashanta Gupta, 25+ years teaching.",
+  "student success count": () => "10,000+ students mentored successfully."
+};
+
+if(!localStorage.getItem("username")) {
+  settings.style.display="flex";
+} else {
+  greet();
+}
+
+function saveSettings(){
+  username=document.getElementById("usernameInput").value||"User";
+  localStorage.setItem("username",username);
+  settings.style.display="none";
+  greet();
+}
+
+function greet(){
+  botReply(`Hello ${username}, welcome to Premier Institute!`);
+}
+
+function sendMsg(){
+  const text=input.value.trim();
+  if(!text) return;
+  addMsg(text,"user");
+  input.value="";
+  setTimeout(()=>{processMsg(text);},1000);
+}
+
+function addMsg(text,type){
+  const div=document.createElement("div");
+  div.className="msg "+type;
+  if(type==="bot"){
+    div.innerHTML='<img src="pi.png" alt="AI">'+text;
+  } else {
+    div.textContent=text;
+  }
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function botReply(text){
+  const typing=document.createElement("div");
+  typing.className="typing";
+  typing.textContent="Typing...";
+  chat.appendChild(typing);
+  chat.scrollTop=chat.scrollHeight;
+  setTimeout(()=>{
+    typing.remove();
+    addMsg(text,"bot");
+  },1000);
+}
+
+/* Match using substring scanning */
+function processMsg(msg){
+  const m=msg.toLowerCase();
+  for (const key in customResponses){
+    if(m.includes(key)){
+      botReply(customResponses[key](msg));
+      return;
+    }
+  }
+  botReply("Sorry, I don’t understand that :-: .");
+}
+</script>
+</body>
+</html>

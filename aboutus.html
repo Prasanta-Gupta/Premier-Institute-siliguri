@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premier Institute</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f7fb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 15px;
+    }
+
+    header {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .slideshow-container {
+      width: 300px;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .slide {
+      display: none;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    /* About block */
+    .about {
+      margin-top: 30px;
+      width: 300px;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      font-size: 15px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    /* Footer stats */
+    .footer-stats {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      flex: 1;
+      min-width: 130px;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .stat-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #0077cc;
+    }
+  </style>
+</head>
+<body>
+  <header>Premier Institute </header>
+
+  <!-- Slideshow Block -->
+  <div class="slideshow-container">
+    <div class="slide">
+      <img src="Prashantsir1.png" alt="Prashant Sir 1">
+    </div>
+    <div class="slide">
+      <img src="Prashantsir2.png" alt="Prashant Sir 2">
+    </div>
+    <div class="slide">
+      <img src="Prashantsir3.png" alt="Prashant Sir 3">
+    </div>
+    <div class="slide">
+      <img src="Prashantsir4.png" alt="Prashant Sir 4">
+    </div>
+    <div class="slide">
+      <img src="Prashantsir5.png" alt="Prashant Sir 5">
+    </div>
+  </div>
+
+<div class="footer-stats">
+    <div class="stat-box">
+      <div class="stat-title">Prasanta Gupta</div>
+      <div class="stat-value">Founder</div>
+    </div>
+  <!-- About Block -->
+  <div class="about">
+    Premier Institute is dedicated to providing quality education with 
+    experienced faculty, modern teaching methods, and personalized guidance. 
+    Our mission is to empower students with knowledge, confidence, and 
+    the right skills to excel academically and in life.
+We have tought more than 10000 students of all class with the experience of more than 25 years 
+  </div>
+
+  <!-- Footer Stats -->
+  <div class="footer-stats">
+    <div class="stat-box">
+      <div class="stat-title">Students Taught</div>
+      <div class="stat-value">10000+</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-title">Experience</div>
+      <div class="stat-value">25 Years+</div>
+    </div>
+  </div>
+
+  <script>
+    let slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+      let slides = document.getElementsByClassName("slide");
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1; }
+      slides[slideIndex - 1].style.display = "block";
+      setTimeout(showSlides, 4000); // Auto change every 4 sec
+    }
+  </script>
+</body>
+</html>

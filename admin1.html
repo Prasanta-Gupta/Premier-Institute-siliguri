@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Premier Institute</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+body {
+  margin:0; font-family: Arial,sans-serif;
+  background: linear-gradient(135deg, #fdfbfb, #ebedee);
+  color:#003366;
+  min-height:100vh;
+}
+header {
+  padding:15px 20px; font-size:22px; font-weight:bold;
+  display:flex; align-items:center; justify-content:center;
+  background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.15);
+  border-radius:0 0 20px 20px;
+}
+.container { padding:40px 20px; max-width:800px; margin:0 auto; }
+.block {
+  background:#fff; padding:20px; border-radius:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-bottom:20px;
+}
+.block h2 { margin:0 0 15px; font-size:18px; }
+input, select, textarea {
+  width:100%; padding:10px; margin:8px 0;
+  border:1px solid #ccc; border-radius:10px; outline:none;
+}
+button {
+  background:#003366; color:#fff; border:none;
+  padding:10px 15px; border-radius:10px;
+  cursor:pointer; font-weight:bold; transition:0.3s;
+}
+button:hover { background:#0056d6; }
+.notice-item {
+  padding:10px; margin:8px 0;
+  border:1px solid #ccc; border-radius:12px;
+  background:#f9f9f9; display:flex; justify-content:space-between; align-items:center;
+}
+.notice-item span { flex:1; }
+</style>
+</head>
+<body>
+<header>Admin Panel - Premier Institute</header>
+<div class="container">
+
+  <div id="panelBlock">
+
+    <div class="block">
+      <h2>Send Notice</h2>
+      <input type="text" id="noticeId" placeholder="Enter title / ID">
+      <textarea id="noticeText" placeholder="Enter notice here..."></textarea>
+      <select id="noticeBy">
+        <option value="Prasanta Sir">Prasanta Sir</option>
+        <option value="admin">admin</option>
+        <option value="S4TYAM RAJ">S4TYAM RAJ</option>
+      </select>
+      <button onclick="addNotice()">Submit Notice</button>
+    </div>
+
+    <div class="block">
+      <h2>Manage Notices</h2>
+      <div id="noticeList"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const JSON_BIN_ID = "68d580e243b1c97be94fe7eb";
+const MASTER_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
+
+let notices = [];
+let lastReset = 0;
+
+// Load notices and clear automatically if 48 hours passed
+async function loadNotices(){
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}/latest`, {
+      headers: {"X-Master-Key": MASTER_KEY}
+    });
+    const data = await res.json();
+    notices = data.record.notices || [];
+    lastReset = data.record.lastReset || 0;
+
+    if(Date.now() - lastReset >= 48*60*60*1000){ // 48 hours
+      notices = [];
+      lastReset = Date.now();
+      await saveNotices();
+    }
+
+    renderNotices();
+  } catch(err){ console.error("Failed to load notices:", err); }
+}
+
+// Render notices
+function renderNotices(){
+  const list = document.getElementById("noticeList");
+  list.innerHTML = "";
+  if(notices.length === 0){
+    list.innerHTML = "<p>No notices yet.</p>";
+    return;
+  }
+  notices.forEach((n, idx)=>{
+    const div = document.createElement("div");
+    div.className = "notice-item";
+    div.innerHTML = `<span><b>${n.id}</b>: ${n.text} <small>(By: ${n.by})</small></span>
+      <button onclick="deleteNotice(${idx})">Delete</button>`;
+    list.appendChild(div);
+  });
+}
+
+// Add notice
+async function addNotice(){
+  const id = document.getElementById("noticeId").value.trim();
+  const text = document.getElementById("noticeText").value.trim();
+  const by = document.getElementById("noticeBy").value;
+  if(!id || !text){ alert("ID and Notice cannot be empty!"); return; }
+  notices.push({id, text, by});
+  await saveNotices();
+  document.getElementById("noticeId").value = "";
+  document.getElementById("noticeText").value = "";
+  renderNotices();
+}
+
+// Delete notice
+async function deleteNotice(index){
+  notices.splice(index,1);
+  await saveNotices();
+  renderNotices();
+}
+
+// Save notices to JSON bin
+async function saveNotices(){
+  try{
+    await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": MASTER_KEY
+      },
+      body: JSON.stringify({notices, lastReset})
+    });
+  } catch(err){ console.error("Failed to save notices:", err); }
+}
+
+window.addEventListener('load', loadNotices);
+</script>
+</body>
+</html>
