@@ -154,7 +154,7 @@
     const savedUser = JSON.parse(localStorage.getItem("currentUser"));
     const expiry = localStorage.getItem("loginExpiry");
     if (savedUser && expiry && Date.now() < parseInt(expiry)) {
-      window.location.href = "page1.html";
+      window.location.href = "ban.html";
     }
   };
 
