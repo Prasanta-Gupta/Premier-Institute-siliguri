@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+</head>
+<body>
+
+<h1>Admin Quotes Pannel</h1>
+
+<h3>Add New Qoute</h3>
+<p>Enter Quote:</p>
+<input type="text" id="quoteInput">
+<br><br>
+<p>Enter Name:</p>
+<input type="text" id="nameInput">
+<br><br>
+<button onclick="addQuote()">Add Quote</button>
+
+<hr>
+
+<h3>Current Quotes</h3>
+<div id="quotesList">Loading...</div>
+
+<div id="deleteModal" style="display:none;">
+<h3>Are you sure to delete</h3>
+<button onclick="confirmDelete()">Yes</button>
+<button onclick="closeModal()">No</button>
+</div>
+
+<script>
+const JSON_BIN_ID = "68e91675ae596e708f0d5326";
+const MASTER_KEY = "$2a$10$O4BNOnc06HJiXrEj3a.mCegLmq0wYd3YFPtuUey2/7k7rwi7ke4nm";
+let quotes = [];
+let deleteIndex = -1;
+
+async function loadQuotes(){
+  try{
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}/latest`, { 
+      headers: {"X-Master-Key": MASTER_KEY}
+    });
+    const data = await res.json();
+    quotes = data.record.quotes || [];
+    displayQuotes();
+  } catch(err){ 
+    document.getElementById("quotesList").innerHTML = 'Failed to load';
+    console.error(err);
+  }
+}
+
+function displayQuotes(){
+  const list = document.getElementById("quotesList");
+  if(quotes.length === 0){
+    list.innerHTML = 'No quotes';
+    return;
+  }
+  
+  list.innerHTML = "";
+  quotes.forEach((q, idx) => {
+    const p = document.createElement("p");
+    p.innerHTML = `${String.fromCharCode(65 + idx)}. ${q.Quote} - ${q.Name} `;
+    const btn = document.createElement("button");
+    btn.textContent = "Delete";
+    btn.onclick = () => deleteQuote(idx);
+    p.appendChild(btn);
+    list.appendChild(p);
+  });
+}
+
+async function addQuote(){
+  const quote = document.getElementById("quoteInput").value.trim();
+  const name = document.getElementById("nameInput").value.trim();
+  
+  if(!quote || !name){
+    alert("Please enter both");
+    return;
+  }
+  
+  quotes.push({ Quote: quote, Name: name });
+  
+  try{
+    await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": MASTER_KEY
+      },
+      body: JSON.stringify({ quotes: quotes })
+    });
+    
+    document.getElementById("quoteInput").value = "";
+    document.getElementById("nameInput").value = "";
+    displayQuotes();
+    alert("Added");
+  } catch(err){
+    alert("Failed");
+    console.error(err);
+    quotes.pop();
+  }
+}
+
+function deleteQuote(idx){
+  deleteIndex = idx;
+  document.getElementById("deleteModal").style.display = "block";
+}
+
+async function confirmDelete(){
+  if(deleteIndex < 0) return;
+  
+  quotes.splice(deleteIndex, 1);
+  
+  try{
+    await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": MASTER_KEY
+      },
+      body: JSON.stringify({ quotes: quotes })
+    });
+    
+    displayQuotes();
+    closeModal();
+    alert("Deleted");
+  } catch(err){
+    alert("Failed");
+    console.error(err);
+  }
+}
+
+function closeModal(){
+  document.getElementById("deleteModal").style.display = "none";
+  deleteIndex = -1;
+}
+
+loadQuotes();
+</script>
+</body>
+</html>
