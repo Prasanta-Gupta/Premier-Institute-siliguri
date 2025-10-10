@@ -69,6 +69,14 @@ footer { text-align:center; margin-top:30px; font-weight:bold; color:#003366; }
   to { transform: translateX(-100%); }
 }
 
+/* Quotes Marquee */
+.quotes-marquee {
+  background:#f0f8ff; border:2px solid #003366; padding:8px; border-radius:12px; overflow:hidden; white-space:nowrap;
+}
+.quotes-marquee span {
+  display:inline-block; padding-left:100%; animation:scroll-left 20s linear infinite; font-weight:bold; color:#003366;
+}
+
 /* Ban Overlay */
 .ban-overlay{
   position:fixed; inset:0; background: rgba(0,4,0,0.8); display:flex; justify-content:center; align-items:center; z-index:9999; backdrop-filter: blur(4px); display:none;
@@ -114,6 +122,14 @@ footer { text-align:center; margin-top:30px; font-weight:bold; color:#003366; }
 
 <div class="container">
 
+  <!-- Quotes Marquee -->
+  <div class="block">
+    <h2>Inspirational Quotes</h2>
+    <div class="quotes-marquee">
+      <span id="quotesText">Loading quotes...</span>
+    </div>
+  </div>
+
   <!-- Locations -->
   <div class="block">
     <h2>Locations</h2>
@@ -125,7 +141,7 @@ footer { text-align:center; margin-top:30px; font-weight:bold; color:#003366; }
   <div class="block">
     <h2>Supported Boards</h2>
     <div class="boards-marquee">
-      <span>CBSE -&nbsp; ICSE -&nbsp; ISC -&nbsp; WBBSE -&nbsp; WBCHSE -&nbsp; NIOS -&nbsp; IGNOU &nbsp;</span>
+      <span>CBSE -&nbsp; ICSE -&nbsp; ISE -&nbsp; WBBSE -&nbsp; WBCHSE -&nbsp; NIOS -&nbsp; IGNOU &nbsp;</span>
     </div>
   </div>
 
@@ -161,7 +177,15 @@ footer { text-align:center; margin-top:30px; font-weight:bold; color:#003366; }
   <footer id="userName"></footer>
 </div>
 
-
+<!-- Ban Overlay -->
+<div id="banOverlay" class="ban-overlay">
+  <div class="ban-card">
+    <h2> Account Banned</h2>
+    <p id="banMsg">You are banned.</p>
+    <input type="password" id="unbanPass" placeholder="Enter unban password">
+    <button onclick="tryUnban()">Unban</button>
+  </div>
+</div>
 
 <script>
 function openMenu(){ document.getElementById("sideMenu").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
@@ -200,9 +224,9 @@ if(savedClass){ classSelect.value=savedClass; displaySubjects(savedClass); }
 const currentUser = JSON.parse(localStorage.getItem("currentUser")|| '{}');
 if(currentUser.Name) document.getElementById("userName").textContent = currentUser.Name;
 
-// Notices (JSON BIN)
+// Notices (JSON BIN 1)
 const JSON_BIN_ID = "68d580e243b1c97be94fe7eb";
-const MASTER_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
+const MASTER_KEY = "$2a$10$O4BNOnc06HJiXrEj3a.mCegLmq0wYd3YFPtuUey2/7k7rwi7ke4nm";
 async function loadNotices(){
   try{
     const res = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}/latest`, { headers: {"X-Master-Key": MASTER_KEY}});
@@ -217,6 +241,55 @@ async function loadNotices(){
   } catch(err){ console.error("Failed to load notices:", err); }
 }
 loadNotices();
+
+// Quotes (JSON BIN 2)
+const JSON_BIN_ID2 = "68e91675ae596e708f0d5326";
+const MASTER_KEY2 = "$2a$10$O4BNOnc06HJiXrEj3a.mCegLmq0wYd3YFPtuUey2/7k7rwi7ke4nm";
+let allQuotes = [];
+let usedIndices = [];
+
+async function loadQuotes(){
+  try{
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID2}/latest`, { headers: {"X-Master-Key": MASTER_KEY2}});
+    const data = await res.json();
+    allQuotes = data.record.quotes || [];
+    if(allQuotes.length > 0){
+      displayRandomQuote();
+    } else {
+      document.getElementById("quotesText").textContent = "No quotes available";
+    }
+  } catch(err){ 
+    console.error("Failed to load quotes:", err);
+    document.getElementById("quotesText").textContent = "Failed to load quotes";
+  }
+}
+
+function displayRandomQuote(){
+  if(allQuotes.length === 0) return;
+  
+  // Reset if all quotes used
+  if(usedIndices.length >= allQuotes.length){
+    usedIndices = [];
+  }
+  
+  // Get random unused quote
+  let randomIndex;
+  do {
+    randomIndex = Math.floor(Math.random() * allQuotes.length);
+  } while(usedIndices.includes(randomIndex));
+  
+  usedIndices.push(randomIndex);
+  
+  const quote = allQuotes[randomIndex];
+  const quoteText = `${quote.Quote} by ${quote.Name} `;
+  
+  document.getElementById("quotesText").textContent = quoteText;
+  
+  // Change quote every 20 seconds (matches animation duration)
+  setTimeout(displayRandomQuote, 20000);
+}
+
+loadQuotes();
 
 // ==== BAN LOGIC ====
 const BAN_KEY = "USERBANED";
@@ -238,16 +311,14 @@ function showBanOverlay(expiry){
 
 function tryUnban(){
   const pass = document.getElementById("unbanPass").value;
-  if(pass === "SATYAM"){
+  if(pass === "GUPTA"){
     localStorage.removeItem(BAN_KEY);
     document.getElementById("banOverlay").style.display = "none";
-    alert("✅ You are unbanned now.");
+    alert(" You are unbanned now.");
   } else {
-    alert("❌ Wrong password. Ask Admin for password.");
+    alert(" Wrong password. Ask Admin for password.");
   }
 }
 </script>
 </body>
-
 </html>
-
