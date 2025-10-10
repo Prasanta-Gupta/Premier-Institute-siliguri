@@ -21,9 +21,11 @@
       font-family: "Segoe UI", Arial, sans-serif;
       color: #111;
       background: linear-gradient(135deg, #89f7fe, #66a6ff);
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       animation: fadeIn 1.5s ease-in-out;
+      padding: 10px;
+      overflow-x: hidden;
     }
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -34,7 +36,11 @@
     .container {
       display: flex;
       width: 100%;
-      height: 100%;
+      min-height: 100vh;
+      border: 5px solid #89f7fe;
+      border-radius: 10px;
+      overflow: visible;
+      box-shadow: 0 0 30px rgba(137, 247, 254, 0.5);
     }
 
     /* Left side */
@@ -44,12 +50,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      border-right: 4px solid #89f7fe;
     }
     .left img {
       max-width: 90%;
       max-height: 90%;
       object-fit: contain;
       border-radius: 20px;
+      border: 3px solid #89f7fe;
     }
 
     /* Right side */
@@ -60,6 +68,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      border-left: 4px solid #89f7fe;
     }
     .right h1 {
       font-size: 3rem;
@@ -90,10 +99,16 @@
       font-weight: bold;
       transition: all 0.3s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      scroll-behavior: smooth;
     }
     .links a:hover {
       background: #0056d6;
       transform: translateY(-2px);
+    }
+
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
     }
 
     /* Expand Section */
@@ -110,9 +125,11 @@
       font-size: 1rem;
       font-weight: bold;
       transition: all 0.3s ease;
+      scroll-behavior: smooth;
     }
     .expand-btn:hover {
       background: #0056d6;
+      transform: translateY(-2px);
     }
     .hidden {
       display: none;
@@ -131,6 +148,30 @@
       font-weight: bold;
       font-size: 1.1rem;
       color: #003366;
+    }
+
+    /* Skip Button */
+    .skip-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #89f7fe;
+      color: #003366;
+      padding: 15px 25px;
+      border: 3px solid #66a6ff;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+    .skip-btn:hover {
+      background: #66a6ff;
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
     /* Responsive */
@@ -164,8 +205,8 @@
       <div class="links">
         <a href="login.html"><i class="fa fa-sign-in-alt"></i> Login</a>
         <a href="signup.html"><i class="fa fa-user-plus"></i> Sign Up</a>
-        <a href="page1.html"><i class="fa fa-forward"></i> Skip</a>
         <a href="forgot.html"><i class="fa fa-key"></i> Forgot</a>
+        <a href="ban.html"><i class="fa fa-forward"></i> Skip</a>
       </div>
 
       <div class="expand-block">
@@ -184,6 +225,8 @@
     </div>
   </div>
 
+  
+
   <script>
     const JSON_BIN_ID = "68d574d7d0ea881f408ace64";
     const MASTER_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
@@ -193,11 +236,18 @@
       document.getElementById("expand-content").classList.toggle("hidden");
     }
 
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
     function checkPass() {
       const pass = document.getElementById("passInput").value;
       if (pass === "SATYAM") {
         document.getElementById("pass-section").classList.remove("hidden");
-        displayUserCount(); // only display, no increment
+        displayUserCount();
       } else {
         alert("Incorrect password!");
       }
@@ -247,6 +297,4 @@
     updateJsonBin();
   </script>
 </body>
-</html>
-
-
+</html> error
