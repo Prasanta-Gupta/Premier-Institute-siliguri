@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premier Support FAQ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", Arial, sans-serif;
+      background: #ffffff;
+      color: #1f2937;
+      line-height: 1.5;
+      padding: 40px 20px;
+      min-height: 100vh;
+      font-size: 14px;
+      overflow-y: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #111827;
+      margin-bottom: 24px;
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+
+    /* Ask Question Section */
+    #ask-section {
+      max-width: 680px;
+      margin: 0 auto 24px;
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    #ask-section h2 {
+      color: #111827;
+      margin-bottom: 16px;
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+      background: #ffffff;
+      color: #1f2937;
+    }
+
+    .input-group input:focus,
+    .input-group textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .input-group textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    /* Static FAQ Section */
+    #static-faq-section {
+      max-width: 680px;
+      margin: 0 auto 24px;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid #e5e7eb;
+    }
+
+    #static-faq-section h2 {
+      color: #111827;
+      margin-bottom: 16px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .static-faq-item {
+      background: #ffffff;
+      border: 1px solid #000000;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .static-faq-question {
+      padding: 14px 16px;
+      cursor: pointer;
+      font-weight: 500;
+      color: #111827;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .static-faq-question:hover {
+      background: #f9fafb;
+    }
+
+    .static-faq-question::after {
+      content: '▼';
+      font-size: 0.75rem;
+      transition: transform 0.3s;
+      color: #6b7280;
+    }
+
+    .static-faq-question.active::after {
+      transform: rotate(180deg);
+    }
+
+    .static-faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      border-top: 1px solid #000000;
+    }
+
+    .static-faq-answer.active {
+      max-height: 200px;
+    }
+
+    .static-faq-answer-content {
+      padding: 14px 16px;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    /* Main FAQ container with RED border */
+    #faq-container {
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 2px solid #dc2626;
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      min-height: 200px;
+    }
+
+    .faq {
+      background: #f9fafb;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      border: 1px solid #e5e7eb;
+      transition: border-color 0.2s;
+    }
+
+    .faq:hover {
+      border-color: #d1d5db;
+    }
+
+    .faq-header {
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #6b7280;
+      font-size: 0.875rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-user {
+      color: #3b82f6;
+    }
+
+    .faq-time {
+      color: #9ca3af;
+      font-size: 0.8125rem;
+    }
+
+    .faq-text {
+      margin: 10px 0;
+      font-size: 0.9375rem;
+      color: #111827;
+      line-height: 1.6;
+    }
+
+    .faq-answer {
+      background: #f0fdf4;
+      padding: 12px;
+      border-left: 3px solid #10b981;
+      border-radius: 4px;
+      margin-top: 12px;
+      display: block;
+    }
+
+    .faq-answer strong {
+      color: #059669;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .answer-form {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+    }
+
+    .answer-form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+      margin-bottom: 8px;
+      background: #ffffff;
+      color: #1f2937;
+    }
+
+    .answer-form textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: background 0.2s;
+      margin-right: 8px;
+    }
+
+    .btn:hover {
+      background: #2563eb;
+    }
+
+    .btn-success {
+      background: #10b981;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-cancel {
+      background: #475569;
+    }
+
+    .btn-cancel:hover {
+      background: #334155;
+    }
+
+    .btn-edit {
+      background: #f59e0b;
+      padding: 6px 12px;
+      font-size: 0.8125rem;
+    }
+
+    .btn-edit:hover {
+      background: #d97706;
+    }
+
+    #admin-box {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      width: 20px;
+      height: 20px;
+      background: rgba(229,231,235,0.5);
+      border: 1px solid rgba(209,213,219,0.8);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: opacity 0.2s;
+      opacity: 0.3;
+    }
+
+    #admin-box:hover {
+      opacity: 0.7;
+      background: rgba(209,213,219,0.6);
+    }
+
+    .admin-badge {
+      position: fixed;
+      top: 15px;
+      right: 45px;
+      background: #10b981;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 0.8125rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      display: none;
+    }
+
+    .admin-badge.active {
+      display: block;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 32px;
+      color: #9ca3af;
+      font-size: 0.9375rem;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 16px;
+      border-radius: 6px;
+      border-left: 3px solid #dc2626;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: #9ca3af;
+    }
+
+    .empty-state h3 {
+      font-size: 1.125rem;
+      margin-bottom: 8px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .message {
+      max-width: 700px;
+      margin: 0 auto 16px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      text-align: center;
+      animation: slideIn 0.3s ease;
+      font-size: 0.875rem;
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border-left: 3px solid #10b981;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 3px solid #dc2626;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Confirm Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.75);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+    }
+
+    .modal-content h3 {
+      color: #111827;
+      margin-bottom: 12px;
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    .modal-content p {
+      color: #6b7280;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      font-size: 0.9375rem;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Premier Support FAQ</h1>
+
+  <div id="admin-badge" class="admin-badge">✅ Admin Mode</div>
+  <div id="admin-box" title="Admin Access"></div>
+
+  <div id="message-area"></div>
+
+  <!-- Ask Question Section -->
+  <div id="ask-section">
+    <h2> Ask Your Question</h2>
+    <div class="input-group">
+      <input type="text" id="user-name" placeholder="Your Name" />
+    </div>
+    <div class="input-group">
+      <textarea id="user-question" placeholder="Type your question here..."></textarea>
+    </div>
+    <button class="btn btn-success" onclick="submitQuestion()">Submit Question</button>
+  </div>
+
+  <!-- Static FAQ Section -->
+  <div id="static-faq-section">
+    <h2>Frequently Asked Questions</h2>
+    
+    <div class="static-faq-item">
+      <div class="static-faq-question" onclick="toggleStaticFAQ(0)">
+        What is the timing?
+      </div>
+      <div class="static-faq-answer" id="static-answer-0">
+        <div class="static-faq-answer-content">
+          The timing will be assigned to the student according to their class.
+        </div>
+      </div>
+    </div>
+
+    <div class="static-faq-item">
+      <div class="static-faq-question" onclick="toggleStaticFAQ(1)">
+        Which Boards do we teach?
+      </div>
+      <div class="static-faq-answer" id="static-answer-1">
+        <div class="static-faq-answer-content">
+          Check out the Home page for more information.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Container with RED border -->
+  <div id="faq-container">
+    <div class="loading"> Loading Faqs...</div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div id="confirm-modal" class="modal">
+    <div class="modal-content">
+      <h3> Confirm Save</h3>
+      <p>Are you sure to save? Please look for any mistakes.</p>
+      <div class="modal-buttons">
+        <button class="btn btn-success" onclick="confirmSave()">Yes Sure</button>
+        <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const JSONBIN_ID = "68ec6874d0ea881f409fdd23";
+    const API_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
+    const BIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
+    let isAdmin = localStorage.getItem("ADMIN") === "load";
+    let currentFAQs = [];
+    let pendingSave = null;
+
+    if (isAdmin) {
+      document.getElementById("admin-badge").classList.add("active");
+    }
+
+    async function fetchFAQs() {
+      try {
+        const res = await fetch(BIN_URL + "/latest", {
+          headers: { "X-Master-Key": API_KEY }
+        });
+        const data = await res.json();
+        
+        if (data.record && Array.isArray(data.record)) {
+          currentFAQs = data.record;
+        } else if (Array.isArray(data.record?.faqs)) {
+          currentFAQs = data.record.faqs;
+        } else if (Array.isArray(data)) {
+          currentFAQs = data;
+        } else {
+          currentFAQs = [];
+        }
+        
+        renderFAQs(currentFAQs);
+      } catch (e) {
+        console.error("Fetch error:", e);
+        document.getElementById("faq-container").innerHTML = 
+          '<div class="error">Error loading FAQs. Please check your API configuration.</div>';
+      }
+    }
+
+    function renderFAQs(faqs) {
+      const container = document.getElementById("faq-container");
+      
+      if (!faqs || faqs.length === 0) {
+        container.innerHTML = '<div class="empty-state"><h3>📭 No questions yet</h3><p>Be the first to ask a question!</p></div>';
+        return;
+      }
+
+      container.innerHTML = "";
+      faqs.forEach((faq, index) => {
+        const div = document.createElement("div");
+        div.className = "faq";
+        div.innerHTML = `
+          <div class="faq-header">
+            <span class="faq-user">${faq.User || "Anonymous"}</span>
+            <span class="faq-time">${faq.Time || ""}</span>
+          </div>
+          <div class="faq-text">${faq.Text || ""}</div>
+          ${faq.Answer ? `
+            <div class="faq-answer">
+              <strong>Answer:</strong>
+              <div>${faq.Answer}</div>
+            </div>
+            ${isAdmin ? `<button class="btn btn-edit" onclick="editAnswer(${index})">Edit Answer</button>` : ''}
+          ` : ''}
+          ${isAdmin && !faq.Answer ? `
+            <button class="btn" onclick="showAnswerForm(${index})">Answer Question</button>
+          ` : ''}
+          <div id="answer-form-${index}"></div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function showAnswerForm(index) {
+      const formContainer = document.getElementById(`answer-form-${index}`);
+      formContainer.innerHTML = `
+        <div class="answer-form">
+          <textarea id="answer-text-${index}" placeholder="Type your answer here..."></textarea>
+          <button class="btn btn-success" onclick="saveAnswer(${index})">Save Answer</button>
+          <button class="btn btn-cancel" onclick="cancelAnswer(${index})">Cancel</button>
+        </div>
+      `;
+    }
+
+    function editAnswer(index) {
+      const formContainer = document.getElementById(`answer-form-${index}`);
+      formContainer.innerHTML = `
+        <div class="answer-form">
+          <textarea id="answer-text-${index}" placeholder="Edit your answer...">${currentFAQs[index].Answer}</textarea>
+          <button class="btn btn-success" onclick="saveAnswer(${index})">Update Answer</button>
+          <button class="btn btn-cancel" onclick="cancelAnswer(${index})">Cancel</button>
+        </div>
+      `;
+    }
+
+    function cancelAnswer(index) {
+      document.getElementById(`answer-form-${index}`).innerHTML = "";
+    }
+
+    function saveAnswer(index) {
+      const answerText = document.getElementById(`answer-text-${index}`).value.trim();
+      if (!answerText) {
+        showMessage("Please enter an answer!", "error");
+        return;
+      }
+      pendingSave = { index, answerText };
+      document.getElementById("confirm-modal").classList.add("active");
+    }
+
+    async function confirmSave() {
+      if (!pendingSave) return;
+      
+      currentFAQs[pendingSave.index].Answer = pendingSave.answerText;
+      closeModal();
+      
+      await saveFAQs(currentFAQs);
+      pendingSave = null;
+    }
+
+    function closeModal() {
+      document.getElementById("confirm-modal").classList.remove("active");
+      pendingSave = null;
+    }
+
+    async function submitQuestion() {
+      const userName = document.getElementById("user-name").value.trim();
+      const userQuestion = document.getElementById("user-question").value.trim();
+
+      if (!userName || !userQuestion) {
+        showMessage("Please fill in both name and question!", "error");
+        return;
+      }
+
+      const now = new Date();
+      const time = now.toLocaleTimeString("en-US", { 
+        hour: "2-digit", 
+        minute: "2-digit", 
+        hour12: false 
+      });
+      const date = now.toLocaleDateString("en-GB", { 
+        day: "2-digit", 
+        month: "2-digit", 
+        year: "2-digit" 
+      });
+
+      const newQuestion = {
+        User: userName,
+        Time: `${time} | ${date}`,
+        Text: userQuestion,
+        Answer: ""
+      };
+
+      currentFAQs.unshift(newQuestion);
+      await saveFAQs(currentFAQs);
+
+      document.getElementById("user-name").value = "";
+      document.getElementById("user-question").value = "";
+      showMessage(" Question submitted successfully!", "success");
+    }
+
+    async function saveFAQs(faqs) {
+      try {
+        const response = await fetch(BIN_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": API_KEY
+          },
+          body: JSON.stringify(faqs)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        showMessage("Saved successfully!", "success");
+        fetchFAQs();
+      } catch (e) {
+        console.error("Save error:", e);
+        showMessage("Error saving. Please try again.", "error");
+      }
+    }
+
+    function showMessage(text, type) {
+      const messageArea = document.getElementById("message-area");
+      messageArea.innerHTML = `<div class="message ${type}">${text}</div>`;
+      setTimeout(() => {
+        messageArea.innerHTML = "";
+      }, 4000);
+    }
+
+    document.getElementById("admin-box").onclick = () => {
+      if (isAdmin) {
+        if (confirm("Already logged in as Admin. Logout?")) {
+          localStorage.removeItem("ADMIN");
+          isAdmin = false;
+          document.getElementById("admin-badge").classList.remove("active");
+          fetchFAQs();
+        }
+        return;
+      }
+      const pass = prompt("Enter Admin Password:");
+      if (pass === "GUPTA") {
+        localStorage.setItem("ADMIN", "load");
+        isAdmin = true;
+        document.getElementById("admin-badge").classList.add("active");
+        showMessage(" Admin mode activated!", "success");
+        fetchFAQs();
+      } else if (pass) {
+        showMessage("Wrong password!", "error");
+      }
+    };
+
+    function toggleStaticFAQ(index) {
+      const answer = document.getElementById(`static-answer-${index}`);
+      const question = answer.previousElementSibling;
+      
+      answer.classList.toggle('active');
+      question.classList.toggle('active');
+    }
+
+    fetchFAQs();
+  </script>
+</body>
+</html>
