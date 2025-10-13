@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coming Soon</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Roboto", "Helvetica Neue", Arial, sans-serif;
+      background: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #000000;
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+      letter-spacing: 2px;
+    }
+
+    .video-wrapper {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 16px;
+      border: 2px solid #e5e7eb;
+      margin-bottom: 30px;
+    }
+
+    video {
+      width: 100%;
+      max-width: 500px;
+      height: 500px;
+      border-radius: 8px;
+      display: block;
+      border: 1px solid #d1d5db;
+    }
+
+    .message {
+      color: #374151;
+      font-size: 1.125rem;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 30px;
+      }
+
+      .video-wrapper {
+        padding: 15px;
+      }
+
+      .message {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>COMING SOON</h1>
+    
+    <div class="video-wrapper">
+      <video autoplay loop muted playsinline>
+        <source src="coming.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    
+    <p class="message">The developer / i am thinking of something unique to add</p>
+  </div>
+</body>
+</html>
