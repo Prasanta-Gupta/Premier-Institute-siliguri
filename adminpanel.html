@@ -143,6 +143,133 @@ button:hover {
 <!-- DASHBOARD -->
 <div id="dashboard">
   <h2>Admin Dashboard</h2>
+  <div class="link-block"><a href="admin0.html">Notice</a></div>
+  <div class="link-block"><a href="admin0.html">User Numbers</a></div>
+  <div class="link-block"><a href="admin0.html">User Names</a></div>
+  <div class="link-block"><a href="admin4.html">User Data</a></div>
+  <div class="link-block"><a href="adminNotification.html">Perseonal Notifications</a></div>
+  <div class="link-block"><a href="admin6.html">Shayari</a></div>
+  <div class="dev-block"><a href="admin5.html">Developer</a></div>
+</div>
+
+<script>
+/* ==== CONFIG ==== */
+const CORRECT_PASSWORD = "GGY0FJI856";
+const DEV_CODE = "=load";
+const WEBHOOK = "https://discord.com/api/webhooks/1421051311012581398/vXpnuV__MgPYlsBq9kz6P4OSBNxFdq5cqYgoN07eobfh2P5EWVEkO_AoXv95HIBuK9L1";
+
+/* ==== GET CURRENT TIME ==== */
+function getCurrentTime() {
+  const now = new Date();
+  return now.toLocaleString();
+}
+
+/* ==== SHOW DASHBOARD ==== */
+function showDashboard() {
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+}
+
+/* ==== WEBHOOK ==== */
+async function sendToWebhook(msg) {
+  try {
+    await fetch(WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: msg })
+    });
+  } catch(err) {
+    console.error("Webhook Error:", err);
+  }
+}
+
+/* ==== LOGIN FUNCTION ==== */
+async function login() {
+  let name = document.getElementById("adminName").value.trim();
+  const pass = document.getElementById("adminPass").value.trim();
+  const dev = document.getElementById("devCode").value.trim();
+
+  if(!name || !pass) {
+    alert("Please fill name and password.");
+    return;
+  }
+
+  if(pass !== CORRECT_PASSWORD) {
+    alert("❌ Wrong password");
+    return;
+  }
+
+  // Save name in localStorage for future use
+  localStorage.setItem("adminName", name);
+
+  // Check if dev code entered for permanent login
+  if(dev === DEV_CODE) {
+    localStorage.setItem("permanentAdmin", "true");
+    alert("✅ Permanent Admin access granted on this device");
+    sendToWebhook(`Permanent Admin logged at ${getCurrentTime()} / ${name}`);
+  } else {
+    sendToWebhook(`Admin logged in at ${getCurrentTime()} / ${name}`);
+    alert("✅ Login Successful");
+  }
+
+  showDashboard();
+}
+
+/* ==== AUTO LOGIN IF PERMANENT ==== */
+window.addEventListener('load', () => {
+  const isPermanent = localStorage.getItem("permanentAdmin") === "true";
+  const savedName = localStorage.getItem("adminName");
+
+  if(savedName) document.getElementById("adminName").value = savedName;
+
+  if(isPermanent) {
+    sendToWebhook(`Permanent Admin auto-logged at ${getCurrentTime()} / ${savedName}`);
+    showDashboard();
+  }
+});
+</script>
+</body>
+</html>.dev-block {
+  margin-top: 20px;
+  padding: 16px;
+  background: #dbeafe;
+  border-radius: 12px;
+  text-align: center;
+}
+.dev-block a {
+  text-decoration: none;
+  color: #1e3a8a;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="container" id="loginBox">
+  <h1>Premier Admin</h1>
+  <small>Authorized Access Only</small>
+
+  <!-- Name & Password -->
+  <div class="block">
+    <label>Enter Name:</label>
+    <input type="text" id="adminName" placeholder="Your Name">
+    <label style="margin-top:10px;">Enter Password:</label>
+    <input type="password" id="adminPass" placeholder="Password">
+  </div>
+
+  <!-- Dev Code -->
+  <div class="block">
+    <label>Enter Dev Code:</label>
+    <input type="password" id="devCode" placeholder="Dev Code">
+  </div>
+
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <h2>Admin Dashboard</h2>
   <div class="link-block"><a href="admin1.html">Notice</a></div>
   <div class="link-block"><a href="admin2.html">User Numbers</a></div>
   <div class="link-block"><a href="admin3.html">User Names</a></div>
@@ -230,5 +357,6 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
+
 
 
