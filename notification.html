@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Notifications</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:"Segoe UI",sans-serif;
+  background:#f5f7fa;
+  padding:15px;
+  padding-bottom:60px;
+}
+
+h1{
+  text-align:center;
+  color:#1a237e;
+  font-size:20px;
+  margin-bottom:15px;
+}
+
+.box{
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  max-width:380px;
+  margin:15px auto;
+  box-shadow:0 4px 14px rgba(0,0,0,0.12);
+  border:1px solid #ddd;
+  font-size:13px;
+}
+
+.box h3{
+  margin:5px 0 10px;
+  font-size:15px;
+  color:#0d47a1;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  border:1px solid #bbb;
+  border-radius:6px;
+  margin-top:5px;
+  font-size:13px;
+}
+
+button{
+  width:100%;
+  margin-top:12px;
+  padding:10px;
+  background:#1976d2;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 3px 10px rgba(0,0,0,0.15);
+  transition:background 0.3s ease;
+}
+
+button:hover{
+  background:#1565c0;
+}
+
+.notice{
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.12);
+  font-size:13px;
+  position:relative;
+  transition:all 0.3s ease;
+}
+
+.notice:hover{
+  transform:translateY(-2px);
+  box-shadow:0 5px 15px rgba(0,0,0,0.18);
+}
+
+.newNote{
+  background:#fff7e0;
+  border-left:5px solid #ff9800;
+  animation:slideIn 0.4s ease;
+}
+
+.oldNote{
+  background:#e9f2ff;
+  border-left:5px solid #0b84ff;
+  opacity:0.85;
+}
+
+.notice strong{
+  display:block;
+  margin-bottom:6px;
+  color:#333;
+}
+
+.notice .date{
+  font-size:11px;
+  color:#666;
+  margin-top:6px;
+  font-style:italic;
+}
+
+.badge{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:#ff5252;
+  color:#fff;
+  font-size:10px;
+  padding:3px 8px;
+  border-radius:12px;
+  font-weight:600;
+  text-transform:uppercase;
+}
+
+.none{
+  text-align:center;
+  padding:20px;
+  color:#888;
+  font-size:13px;
+}
+
+/* FOOTER STATUS */
+.footer{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  border-top:1px solid #ddd;
+  padding:8px 15px;
+  font-size:11px;
+  color:#666;
+  text-align:center;
+  box-shadow:0 -2px 8px rgba(0,0,0,0.08);
+  z-index:1000;
+}
+
+.footer.success{
+  background:#e8f5e9;
+  color:#2e7d32;
+  border-top:1px solid #81c784;
+}
+
+.footer.error{
+  background:#ffebee;
+  color:#c62828;
+  border-top:1px solid #ef5350;
+}
+
+.footer.warning{
+  background:#fff3e0;
+  color:#e65100;
+  border-top:1px solid #ffb74d;
+}
+
+@keyframes slideIn{
+  from{
+    opacity:0;
+    transform:translateX(-20px);
+  }
+  to{
+    opacity:1;
+    transform:translateX(0);
+  }
+}
+
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.footer{
+  animation:fadeIn 0.3s ease;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Notifications</h1>
+
+<!-- ASK NAME -->
+<div id="askBox" class="box" style="display:none;">
+  <h3>Enter Username</h3>
+  <input id="nameInput" type="text" placeholder="Type your exact username">
+  <button onclick="registerUser()">Save</button>
+</div>
+
+<!-- MAIN -->
+<div id="mainBox" class="box" style="display:none;">
+  <div><b>Username:</b> <span id="userShow"></span></div>
+
+  <h3 style="margin-top:15px;">Notifications</h3>
+  <div id="notiList"></div>
+</div>
+
+<!-- FOOTER STATUS -->
+<div id="footer" class="footer"></div>
+
+<script>
+/* JSONBIN CONFIG */
+const binBase = "https://api.jsonbin.io/v3/b/6958dfa8ae596e708fc1dd48";
+const binGet = binBase + "/latest";
+const headers = {
+  "X-Master-Key": "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA."
+};
+
+/* LOCAL STORAGE KEYS FROM PROFILE PAGE */
+const PROFILE_DATA_KEY = "currentUser"; // The object key from your profile page
+const SAVE_KEY = "username";            // Fallback key
+
+let currentUser = "";
+
+/* FOOTER STATUS HELPER */
+function showFooter(message, type = ""){
+  const footer = document.getElementById("footer");
+  footer.textContent = message;
+  footer.className = "footer " + type;
+}
+
+/* START */
+window.onload = async () => {
+  let username = null;
+
+  // 1. Try to get name from the Profile Page's LocalStorage object
+  const profileData = localStorage.getItem(PROFILE_DATA_KEY);
+  if (profileData) {
+    const parsedData = JSON.parse(profileData);
+    if (parsedData.Name) {
+      username = parsedData.Name.trim();
+    }
+  }
+
+  // 2. Fallback to simple 'username' key if profile object doesn't exist
+  if (!username) {
+    username = localStorage.getItem(SAVE_KEY);
+  }
+
+  /* If no username found anywhere, ask for name */
+  if(!username){
+    document.getElementById("askBox").style.display = "block";
+    showFooter("⚠️ No profile name found. Please register.", "warning");
+    return;
+  }
+
+  /* Set current user and show UI */
+  currentUser = username;
+  document.getElementById("mainBox").style.display = "block";
+  document.getElementById("userShow").innerText = username;
+  showFooter(`✓ Logged in as: ${username}`, "success");
+
+  /* Load notifications */
+  loadNotifications();
+  setInterval(loadNotifications, 10000);
+};
+
+/* REGISTER USER (If not found in Profile) */
+async function registerUser(){
+  let name = document.getElementById("nameInput").value.trim();
+  if(!name){ 
+    showFooter("❌ Enter valid name", "error");
+    return; 
+  }
+
+  try{
+    showFooter("⏳ Saving...", "");
+
+    /* Save to both formats to ensure compatibility */
+    localStorage.setItem(SAVE_KEY, name);
+    
+    // Create the profile object structure so the Profile page can also see it
+    const profileObj = JSON.parse(localStorage.getItem(PROFILE_DATA_KEY) || "{}");
+    profileObj.Name = name;
+    localStorage.setItem(PROFILE_DATA_KEY, JSON.stringify(profileObj));
+
+    currentUser = name;
+
+    const res = await fetch(binGet,{headers});
+    let arr = (await res.json()).record;
+    if(!Array.isArray(arr)) arr=[arr];
+
+    const exists = arr.find(u => u.user.toLowerCase() === name.toLowerCase());
+
+    if(!exists){
+      arr.push({
+        user: name,
+        notice: "",
+        contact: "",
+        date: "",
+        seen: false
+      });
+
+      await fetch(binBase,{
+        method:"PUT",
+        headers:{ "Content-Type":"application/json", ...headers },
+        body:JSON.stringify(arr)
+      });
+    }
+
+    showFooter(";) Name saved successfully!", "success");
+    setTimeout(() => location.reload(), 1000);
+
+  }catch(e){
+    showFooter(" Error: " + e.message, "error");
+  }
+}
+
+/* LOAD NOTIFICATIONS */
+async function loadNotifications(){
+  try{
+    const res = await fetch(binGet,{headers});
+    const data = await res.json();
+    let arr = data.record;
+
+    if(!Array.isArray(arr)) arr=[arr];
+
+    const userObj = arr.find(u => u.user.toLowerCase() === currentUser.toLowerCase());
+
+    if(!userObj || !userObj.notice){
+      document.getElementById("notiList").innerHTML = '<div class="none">No notifications yet</div>';
+      showFooter("<div> No new notifications <div>", "");
+      return;
+    }
+
+    const isSeen = userObj.seen === true;
+    const noticeClass = isSeen ? "oldNote" : "newNote";
+    const badge = isSeen ? "" : '<span class="badge">NEW</span>';
+
+    document.getElementById("notiList").innerHTML = `
+      <div class="${noticeClass} notice">
+        ${badge}
+        <strong>Message:</strong> ${userObj.notice}
+        <div><strong>Contact:</strong> ${userObj.contact || "N/A"}</div>
+        <div class="date">${userObj.date || "No date"}</div>
+      </div>
+    `;
+
+    if(!isSeen) showFooter(" New notification received!", "success");
+    else showFooter(" Notifications up to date", "");
+
+  } catch(e) {
+    showFooter("❌ Connection Error", "error");
+  }
+}
+
+</script>
+
+</body>
+</html>
