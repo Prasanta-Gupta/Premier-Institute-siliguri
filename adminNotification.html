@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin – Notifications</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  margin:0;padding:20px;font-family:Arial;background:#f5f7fa;
+}
+.box{
+  background:#fff;padding:20px;max-width:500px;margin:auto;
+  border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.12);
+  border:1px solid #ddd;
+}
+h1{text-align:center;color:#1a237e;margin-bottom:20px;}
+label{margin:12px 0 5px;display:block;font-weight:bold;}
+input,textarea,select{
+  width:100%;padding:10px;border:1px solid #bbb;border-radius:8px;font-size:15px;
+}
+textarea{height:110px;}
+button{
+  margin-top:20px;width:100%;padding:12px;background:#0b84ff;color:#fff;
+  border:none;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;
+}
+
+/* Notification card */
+.notice{
+  background:#fff;border-left:5px solid #0b84ff;
+  padding:15px;margin:18px 0;border-radius:8px;position:relative;
+  box-shadow:0 3px 12px rgba(0,0,0,0.1);
+}
+
+/* Small round delete button */
+.deleteBtn{
+  position:absolute;
+  top:10px;right:10px;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:#ff3b3b;color:#fff;
+  border:none;font-size:14px;
+  line-height:22px;text-align:center;
+  padding:0;font-weight:bold;cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Admin Notifications</h1>
+
+<!-- ADD NOTIFICATION -->
+<div class="box">
+  <label>Select User</label>
+  <select id="userSelect">
+    <option disabled selected>Loading users...</option>
+  </select>
+
+  <label>Notification</label>
+  <textarea id="notice" maxlength="2000"></textarea>
+
+  <button onclick="saveNote()">Send Notification</button>
+</div>
+
+<h1 style="margin-top:40px;">All Notifications</h1>
+
+<div id="notiList" class="box"></div>
+
+
+<script>
+/* JSON BIN CONFIG */
+const base = "https://api.jsonbin.io/v3/b/6958dfa8ae596e708fc1dd48";
+const getUrl = base + "/latest";
+const headers = {
+  "Content-Type":"application/json",
+  "X-Master-Key":"$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA."
+};
+
+
+
+/* LOAD USER LIST INTO SELECT */
+async function loadUsers(){
+  const select = document.getElementById("userSelect");
+
+  const res = await fetch(getUrl,{headers});
+  let arr = (await res.json()).record;
+  if(!Array.isArray(arr)) arr=[arr];
+
+  // Extract users
+  let users = [...new Set(arr.map(u => u.user))];
+
+  // Clear old
+  select.innerHTML = "";
+
+  // Add options
+  users.forEach(u=>{
+    select.innerHTML += `<option value="${u}">${u}</option>`;
+  });
+
+  // Also add broadcast "all"
+  select.innerHTML += `<option value="all">all</option>`;
+}
+
+loadUsers();
+
+/* SAVE NEW NOTIFICATION */
+async function saveNote(){
+  const user = document.getElementById("userSelect").value;
+  const notice = document.getElementById("notice").value.trim();
+  if(!user || !notice){ alert("Fill all fields."); return; }
+
+  const newItem = {
+    user:user,
+    notice:notice,
+    date:new Date().toLocaleString(),
+    seen:false,
+    deleted:false
+  };
+
+  const res = await fetch(getUrl,{headers});
+  let arr = (await res.json()).record;
+  if(!Array.isArray(arr)) arr=[arr];
+
+  arr.push(newItem);
+
+  await fetch(base,{method:"PUT",headers,body:JSON.stringify(arr)});
+  loadAll();
+  alert("Notification sent!");
+}
+
+/* LOAD ALL NOTIFICATIONS */
+async function loadAll(){
+  const container = document.getElementById("notiList");
+  const res = await fetch(getUrl,{headers});
+  let arr = (await res.json()).record;
+
+  if(!Array.isArray(arr)) arr=[arr];
+
+  container.innerHTML = "";
+
+  arr.reverse().forEach((n,i)=>{
+
+    container.innerHTML += `
+      <div class="notice">
+        <button class="deleteBtn" onclick="deleteConfirm(${arr.length - 1 - i})">×</button>
+        <b>User:</b> ${n.user}<br>
+        <b>Notice:</b> ${n.notice}<br>
+        <b>Date:</b> ${n.date}<br>
+        <b>Status:</b> ${n.seen ? "Seen ✔" : "Unseen ✖"}<br>
+        <b>Deleted:</b> ${n.deleted ? "Yes" : "No"}
+      </div>
+    `;
+  });
+}
+
+loadAll();
+setInterval(loadAll, 8000);
+
+/* CONFIRM DELETE */
+function deleteConfirm(index){
+  let ok = confirm("Confirm to delete?");
+  if(ok){ softDelete(index); }
+}
+
+/* SAFE SOFT DELETE */
+async function softDelete(index){
+  const res = await fetch(getUrl,{headers});
+  let arr = (await res.json()).record;
+  if(!Array.isArray(arr)) arr=[arr];
+
+  arr[index].user = "DELETED";
+  arr[index].notice = "DELETED";
+  arr[index].deleted = true;
+  arr[index].seen = true;
+
+  await fetch(base,{
+    method:"PUT",
+    headers,
+    body:JSON.stringify(arr)
+  });
+
+  loadAll();
+}
+</script>
+
+</body>
+</html>

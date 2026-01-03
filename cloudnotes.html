@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier Cloud Storage</title>
+<style>
+  :root { --primary: #074A9C; --bg: #f0f4f8; }
+  body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
+  
+  .header { background: linear-gradient(135deg, #074A9C, #66a6ff); padding: 30px 20px 60px; text-align: center; color: white; }
+  .header h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
+
+  .user-box { 
+    background: white; width: 85%; max-width: 350px; margin: -40px auto 20px; 
+    padding: 15px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    text-align: center; font-size: 14px; position: relative; z-index: 10;
+  }
+  .user-box hr { border: 0; border-top: 1px dashed #ddd; margin: 10px 0; }
+  .user-info { display: flex; justify-content: space-around; font-weight: bold; color: var(--primary); }
+
+  .container { padding: 20px; max-width: 500px; margin: auto; }
+  .btn-new { 
+    width: 100%; padding: 12px; background: var(--primary); color: white; border: none; 
+    border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(7, 74, 156, 0.3);
+  }
+
+  .note-card { 
+    background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary);
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .note-card h3 { margin: 0 0 5px; color: var(--primary); font-size: 16px; }
+  .note-content { font-size: 13px; color: #666; word-break: break-all; margin-bottom: 10px; background: #f9f9f9; padding: 8px; border-radius: 5px; }
+  .note-date { font-size: 11px; color: #aaa; }
+  .btn-decode { background: #eef5ff; border: 1px solid #074A9C; color: #074A9C; padding: 5px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; }
+
+  .none { text-align: center; color: #888; margin-top: 40px; }
+
+  #modal { 
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+    background:rgba(0,0,0,0.6); z-index:100; align-items:center; justify-content:center;
+  }
+  .modal-box { background:white; padding:25px; border-radius:20px; width:90%; max-width:400px; }
+  .modal-box h3 { margin-top: 0; color: var(--primary); }
+  .modal-box input, .modal-box textarea { width:100%; padding:12px; margin-bottom:12px; border:1px solid #ddd; border-radius:10px; box-sizing: border-box; font-family: inherit; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Premier Cloud Storage</h1>
+</div>
+
+<div class="user-box" id="userBox">
+  <div class="user-info">
+    <span>Username: <span id="uName">Loading...</span></span>
+    <span>Class: <span id="uClass">...</span></span>
+  </div>
+  <hr>
+  <small id="syncStatus" style="color:#888">Connecting to secure vault...</small>
+</div>
+
+<div class="container" id="mainContent">
+  <button class="btn-new" onclick="toggleModal(true)">+ NEW NOTE</button>
+  <div id="notesList">
+    <div class="none">Fetching your notes...</div>
+  </div>
+</div>
+
+<div id="modal">
+  <div class="modal-box">
+    <h3>New Secure Note</h3>
+    <input type="text" id="noteTitle" placeholder="Note Title">
+    <textarea id="noteText" rows="5" placeholder="Write secret content here..."></textarea>
+    <button class="btn-new" id="saveBtn" onclick="saveNote()">Save to Cloud</button>
+    <button onclick="toggleModal(false)" style="background:none; border:none; width:100%; color:#666; cursor:pointer; margin-top:5px;">Close</button>
+  </div>
+</div>
+
+<script>
+  const binBase = "https://api.jsonbin.io/v3/b/6958e39643b1c97be9161aab";
+  const headers = { 
+    "X-Master-Key": "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.",
+    "Content-Type": "application/json"
+  };
+  
+  let currentUser = "";
+  let currentClass = "";
+
+  // 1. Get user from Profile LocalStorage
+  function loadUser() {
+    const data = localStorage.getItem("currentUser");
+    if (!data) {
+      alert("No Profile Found! Please setup your profile first.");
+      document.getElementById('mainContent').style.display = 'none';
+      return false;
+    }
+    const userObj = JSON.parse(data);
+    currentUser = userObj.Name;
+    currentClass = userObj.Class;
+    document.getElementById('uName').innerText = currentUser;
+    document.getElementById('uClass').innerText = currentClass;
+    return true;
+  }
+
+  // 2. Base64 Obfuscation
+  const encode = (str) => btoa(unescape(encodeURIComponent(str)));
+  const decode = (str) => decodeURIComponent(escape(atob(str)));
+
+  // 3. Fetch notes for THIS user specifically
+  async function fetchNotes() {
+    try {
+      const res = await fetch(binBase + "/latest", { headers });
+      const result = await res.json();
+      const allUsersArray = Array.isArray(result.record) ? result.record : [result.record];
+      
+      // Match with current local username
+      const myData = allUsersArray.find(u => u.user.toLowerCase() === currentUser.toLowerCase());
+      
+      renderNotes(myData ? myData.notes : []);
+      document.getElementById('syncStatus').innerText = "✓ Sync Active";
+      document.getElementById('syncStatus').style.color = "green";
+    } catch (e) {
+      document.getElementById('notesList').innerHTML = '<div class="none">Connection Error.</div>';
+    }
+  }
+
+  function renderNotes(notes) {
+    const list = document.getElementById('notesList');
+    if (!notes || notes.length === 0) {
+      list.innerHTML = '<div class="none">No Notes Found :/</div>';
+      return;
+    }
+    
+    list.innerHTML = notes.map(n => `
+      <div class="note-card">
+        <h3>${decode(n.title)}</h3>
+        <div class="note-content" id="content-${n.id}">${n.note}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="note-date">${n.date}</span>
+          <button class="btn-decode" onclick="viewNote('${n.id}', '${n.note}')">Decode & View</button>
+        </div>
+      </div>
+    `).reverse().join('');
+  }
+
+  function viewNote(id, encodedText) {
+    const el = document.getElementById('content-' + id);
+    if (el.innerText === encodedText) {
+      el.innerText = decode(encodedText);
+      el.style.background = "#fff9c4"; // Highlight when decoded
+    } else {
+      el.innerText = encodedText;
+      el.style.background = "#f9f9f9";
+    }
+  }
+
+  async function saveNote() {
+    const title = document.getElementById('noteTitle').value.trim();
+    const text = document.getElementById('noteText').value.trim();
+    if (!title || !text) return alert("Please enter both title and note.");
+
+    const btn = document.getElementById('saveBtn');
+    btn.innerText = "Encrypting...";
+    btn.disabled = true;
+
+    const newNote = {
+      id: Date.now(),
+      title: encode(title),
+      note: encode(text),
+      date: new Date().toLocaleDateString(),
+      deleted: "No"
+    };
+
+    try {
+      const res = await fetch(binBase + "/latest", { headers });
+      let allUsers = (await res.json()).record;
+      if(!Array.isArray(allUsers)) allUsers = [allUsers];
+
+      // Find user index or create new user entry
+      let userIdx = allUsers.findIndex(u => u.user.toLowerCase() === currentUser.toLowerCase());
+      
+      if (userIdx > -1) {
+        if(!allUsers[userIdx].notes) allUsers[userIdx].notes = [];
+        allUsers[userIdx].notes.push(newNote);
+      } else {
+        allUsers.push({ user: currentUser, class: currentClass, notes: [newNote] });
+      }
+
+      await fetch(binBase, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(allUsers)
+      });
+
+      toggleModal(false);
+      fetchNotes(); // Refresh list
+      document.getElementById('noteTitle').value = "";
+      document.getElementById('noteText').value = "";
+    } catch (e) {
+      alert("Failed to save. Check internet.");
+    } finally {
+      btn.innerText = "Save to Cloud";
+      btn.disabled = false;
+    }
+  }
+
+  function toggleModal(show) {
+    document.getElementById('modal').style.display = show ? 'flex' : 'none';
+  }
+
+  // Initialize
+  if(loadUser()) {
+    fetchNotes();
+  }
+</script>
+</body>
+</html>
