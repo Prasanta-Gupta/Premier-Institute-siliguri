@@ -3,163 +3,196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Premier Admin</title>
+<title>Premier Admin Panel</title>
 <style>
-/* ==== THEME ==== */
-body {
+/* ==== RESET & BASE ==== */
+* {
   margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000000;
+  color: #ffffff;
 }
 
 /* ==== CONTAINER ==== */
 .container {
-  background: #fff;
-  padding: 32px;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-  width: 380px;
-  text-align: center;
-  animation: fadeIn 0.5s ease-in;
+  background: #ffffff;
+  padding: 40px;
+  border: 2px solid #000000;
+  width: 400px;
 }
+
 .container h1 {
-  margin-bottom: 8px;
-  color: #667eea;
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 6px;
 }
+
 .container small {
-  color: #666;
+  color: #666666;
   font-size: 13px;
+  display: block;
+  margin-bottom: 30px;
 }
 
 /* ==== INPUT BLOCK ==== */
 .block {
-  margin-top: 20px;
-  text-align: left;
+  margin-bottom: 18px;
 }
+
 .block label {
   display: block;
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #333;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #000000;
 }
+
 .block input {
   width: 100%;
   padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 10px;
-  outline: none;
+  background: #ffffff;
+  border: 1px solid #000000;
+  color: #000000;
   font-size: 14px;
-  transition: border 0.3s;
-  box-sizing: border-box;
+  outline: none;
 }
+
 .block input:focus {
-  border-color: #667eea;
+  border: 2px solid #000000;
+  padding: 11px;
+}
+
+.block input::placeholder {
+  color: #999999;
 }
 
 /* ==== BUTTON ==== */
 button {
-  margin-top: 24px;
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000000;
   border: none;
-  color: #fff;
-  font-weight: bold;
-  font-size: 16px;
-  border-radius: 10px;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.3s;
+  margin-top: 10px;
 }
+
 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: #333333;
+}
+
+button:active {
+  background: #000000;
 }
 
 /* ==== DASHBOARD ==== */
 #dashboard {
   display: none;
-  background: #fff;
-  padding: 32px;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-  width: 400px;
-  animation: fadeIn 0.5s ease-in;
-}
-#dashboard h2 {
-  margin-bottom: 24px;
-  color: #667eea;
-  text-align: center;
-  font-size: 26px;
-  font-weight: 700;
-}
-.link-block {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 12px;
-  padding: 16px;
-  margin: 12px 0;
-  transition: transform 0.2s, box-shadow 0.3s;
-  border-left: 4px solid #667eea;
-}
-.link-block a {
-  text-decoration: none;
-  color: #333;
-  font-weight: 600;
-  font-size: 16px;
-  display: block;
-}
-.link-block:hover {
-  transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-.dev-block {
-  margin-top: 24px;
-  padding: 18px;
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-  border-radius: 12px;
-  text-align: center;
-  border-left: 4px solid #ff6b6b;
-}
-.dev-block a {
-  text-decoration: none;
-  color: #d63031;
-  font-weight: bold;
-  font-size: 16px;
+  background: #ffffff;
+  padding: 40px;
+  border: 2px solid #000000;
+  width: 480px;
 }
 
-/* ==== ANIMATIONS ==== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+#dashboard h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 30px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #000000;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 24px;
+  margin-bottom: 10px;
+}
+
+.section-title:first-of-type {
+  margin-top: 0;
+}
+
+.link-block {
+  background: #ffffff;
+  border: 1px solid #000000;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.link-block a {
+  text-decoration: none;
+  color: #000000;
+  font-weight: 500;
+  font-size: 14px;
+  display: block;
+}
+
+.link-block:hover {
+  background: #000000;
+}
+
+.link-block:hover a {
+  color: #ffffff;
+}
+
+.dev-block {
+  background: #ffffff;
+  border: 1px solid #000000;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.dev-block a {
+  text-decoration: none;
+  color: #000000;
+  font-weight: 500;
+  font-size: 14px;
+  display: block;
+}
+
+.dev-block:hover {
+  background: #000000;
+}
+
+.dev-block:hover a {
+  color: #ffffff;
 }
 
 /* ==== LOGOUT BUTTON ==== */
 .logout-btn {
-  margin-top: 20px;
-  padding: 10px;
-  background: #ff6b6b;
-  width: 100%;
-  border-radius: 8px;
-  border: none;
-  color: white;
-  font-weight: bold;
+  margin-top: 24px;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  color: #000000;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  transition: background 0.3s;
+  width: 100%;
 }
+
 .logout-btn:hover {
-  background: #ee5a5a;
+  background: #000000;
+  color: #ffffff;
 }
 </style>
 </head>
@@ -167,24 +200,22 @@ button:hover {
 
 <!-- LOGIN -->
 <div class="container" id="loginBox">
-  <h1>Premier Teacher </h1>
+  <h1>Premier Admin Panel</h1>
   <small>Authorized Access Only</small>
 
-  <!-- Name & Password -->
   <div class="block">
-    <label>Enter Name:</label>
-    <input type="text" id="adminName" placeholder="Your Name">
+    <label>Name</label>
+    <input type="text" id="adminName" placeholder="Enter your name">
   </div>
   
   <div class="block">
-    <label>Enter Password:</label>
-    <input type="password" id="adminPass" placeholder="Password">
+    <label>Password</label>
+    <input type="password" id="adminPass" placeholder="Enter password">
   </div>
 
-  <!-- Dev Code -->
   <div class="block">
-    <label>Enter Dev Code (Optional):</label>
-    <input type="password" id="devCode" placeholder="Dev Code for Permanent Access">
+    <label>Dev Code (Optional)</label>
+    <input type="password" id="devCode" placeholder="Enter dev code">
   </div>
 
   <button onclick="login()">Login</button>
@@ -192,15 +223,22 @@ button:hover {
 
 <!-- DASHBOARD -->
 <div id="dashboard">
-  <h2>📊 Admin Dashboard</h2>
-  <div class="link-block"><a href="admin1.html"> Notice</a></div>
+  <h2>Admin Dashboard</h2>
+  
+  <div class="section-title">General</div>
+  <div class="link-block"><a href="admin1.html">Notice</a></div>
   <div class="link-block"><a href="admin2.html">User Numbers</a></div>
   <div class="link-block"><a href="admin3.html">User Names</a></div>
-  <div class="link-block"><a href="database.html">Database</a></div>
   <div class="link-block"><a href="admin4.html">User Data</a></div>
+  
+  <div class="section-title">Content</div>
+  <div class="link-block"><a href="admin6.html">Shayari</a></div>
   <div class="link-block"><a href="adminNotification.html">Personal Notifications</a></div>
-  <div class="link-block"><a href="admin6.html"> Shayari</a></div>
+  
+  <div class="section-title">System</div>
+  <div class="link-block"><a href="database.html">Database</a></div>
   <div class="dev-block"><a href="admin5.html">Developer</a></div>
+  
   <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
@@ -242,26 +280,24 @@ async function login() {
   const dev = document.getElementById("devCode").value.trim();
 
   if(!name || !pass) {
-    alert(" Please fill all .");
+    alert("Please fill name and password.");
     return;
   }
 
   if(pass !== CORRECT_PASSWORD) {
-    alert("Nah Galat password ");
+    alert("Wrong password");
     return;
   }
 
-  // Save name in localStorage for future use
   localStorage.setItem("adminName", name);
 
-  // Check if dev code entered for permanent login
   if(dev === DEV_CODE) {
     localStorage.setItem("permanentAdmin", "true");
-    alert("✅ Permanent Admin access granted on this device");
-    sendToWebhook(`🔑 Permanent Admin logged at ${getCurrentTime()} / ${name}`);
+    alert("Permanent Admin access granted on this device");
+    sendToWebhook(`Permanent Admin logged at ${getCurrentTime()} / ${name}`);
   } else {
-    sendToWebhook(`✅ Admin logged in at ${getCurrentTime()} / ${name}`);
-    alert("✅ Login Successful");
+    sendToWebhook(`Admin logged in at ${getCurrentTime()} / ${name}`);
+    alert("Login Successful");
   }
 
   showDashboard();
@@ -271,20 +307,17 @@ async function login() {
 function logout() {
   if(confirm("Are you sure you want to logout?")) {
     const savedName = localStorage.getItem("adminName");
-    sendToWebhook(`🚪 Admin logged out at ${getCurrentTime()} / ${savedName}`);
+    sendToWebhook(`Admin logged out at ${getCurrentTime()} / ${savedName}`);
     
-    // Clear permanent access
     localStorage.removeItem("permanentAdmin");
     
-    // Reset view
     document.getElementById("loginBox").style.display = "block";
     document.getElementById("dashboard").style.display = "none";
     
-    // Clear password field
     document.getElementById("adminPass").value = "";
     document.getElementById("devCode").value = "";
     
-    alert("✅ Logged out successfully");
+    alert("Logged out successfully");
   }
 }
 
@@ -296,7 +329,7 @@ window.addEventListener('load', () => {
   if(savedName) document.getElementById("adminName").value = savedName;
 
   if(isPermanent) {
-    sendToWebhook(`🔄 Permanent Admin auto-logged at ${getCurrentTime()} / ${savedName}`);
+    sendToWebhook(`Permanent Admin auto-logged at ${getCurrentTime()} / ${savedName}`);
     showDashboard();
   }
 });
