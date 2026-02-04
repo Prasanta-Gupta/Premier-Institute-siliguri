@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share - Premier Institute</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #fdfbfb, #ADD8E6);
+  color: #0972C8;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.share-container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.share-icon {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 25px;
+  background: linear-gradient(135deg, #66a6ff, #0972C8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(9, 114, 200, 0.3);
+}
+
+.share-icon i {
+  font-size: 60px;
+  color: #fff;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: bold;
+  color: #003366;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.institute-name {
+  font-size: 32px;
+  font-weight: bold;
+  color: #0972C8;
+  margin-bottom: 15px;
+}
+
+.tagline {
+  font-size: 18px;
+  color: #003366;
+  margin-bottom: 40px;
+  font-style: italic;
+}
+
+.share-btn {
+  background: linear-gradient(135deg, #66a6ff, #0972C8);
+  color: #fff;
+  border: none;
+  padding: 18px 50px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: 0.3s;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(9, 114, 200, 0.3);
+}
+
+.share-btn:hover {
+  background: linear-gradient(135deg, #0972C8, #003366);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(9, 114, 200, 0.4);
+}
+
+.share-btn i {
+  font-size: 20px;
+}
+
+.success-message {
+  display: none;
+  background: linear-gradient(135deg, #66a6ff, #0972C8);
+  color: #fff;
+  padding: 15px;
+  margin-top: 20px;
+  font-weight: bold;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+  font-size: 16px;
+}
+
+.success-message.show {
+  display: block;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .share-container {
+    padding: 25px;
+  }
+  .share-icon {
+    width: 100px;
+    height: 100px;
+  }
+  .share-icon i {
+    font-size: 50px;
+  }
+  .title {
+    font-size: 22px;
+  }
+  .institute-name {
+    font-size: 28px;
+  }
+  .tagline {
+    font-size: 16px;
+  }
+  .share-btn {
+    padding: 16px 40px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .share-container {
+    padding: 20px;
+  }
+  .share-icon {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 20px;
+  }
+  .share-icon i {
+    font-size: 45px;
+  }
+  .title {
+    font-size: 20px;
+  }
+  .institute-name {
+    font-size: 24px;
+  }
+  .tagline {
+    font-size: 15px;
+    margin-bottom: 35px;
+  }
+  .share-btn {
+    padding: 14px 35px;
+    font-size: 15px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="share-container">
+  <div class="share-icon">
+    <i class="fas fa-share-alt"></i>
+  </div>
+  
+  <h1 class="title">Share This Web</h1>
+  
+  <h2 class="institute-name">Premier Institute</h2>
+  
+  <p class="tagline">A Step Towards Modern Era</p>
+  
+  <button class="share-btn" id="shareBtn">
+    <i class="fas fa-share-nodes"></i>
+    Share Now
+  </button>
+  
+  <div class="success-message" id="successMsg">
+    <i class="fas fa-check-circle"></i> Shared Successfully!
+  </div>
+</div>
+
+<script>
+const shareBtn = document.getElementById('shareBtn');
+const successMsg = document.getElementById('successMsg');
+
+const shareText = `Hello!
+
+Looking for tuitions for your child?
+Try Premier Institute
+
+https://premiere-institute.in
+
+The best and supportive institute for children from class 4 to 12th
+All Boards
+
+Contact us on website or
++91 86170 40060
+WhatsApp/Call`;
+
+shareBtn.addEventListener('click', async () => {
+  // Check if Web Share API is supported
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Premier Institute',
+        text: shareText
+      });
+      
+      // Show success message
+      successMsg.classList.add('show');
+      setTimeout(() => {
+        successMsg.classList.remove('show');
+      }, 3000);
+      
+    } catch (err) {
+      // User cancelled or error occurred
+      if (err.name !== 'AbortError') {
+        console.error('Error sharing:', err);
+        fallbackShare();
+      }
+    }
+  } else {
+    // Fallback for browsers that don't support Web Share API
+    fallbackShare();
+  }
+});
+
+function fallbackShare() {
+  // Copy to clipboard as fallback
+  navigator.clipboard.writeText(shareText).then(() => {
+    successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Message copied to clipboard!';
+    successMsg.classList.add('show');
+    setTimeout(() => {
+      successMsg.classList.remove('show');
+      successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Shared Successfully!';
+    }, 3000);
+  }).catch(err => {
+    console.error('Failed T_T :', err);
+    alert('Please copy the message manually');
+  });
+}
+</script>
+
+</body>
+</html>
