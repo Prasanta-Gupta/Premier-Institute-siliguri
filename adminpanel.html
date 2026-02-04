@@ -13,106 +13,153 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to bottom, #dbeafe, #1e3a8a);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 /* ==== CONTAINER ==== */
 .container {
   background: #fff;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-  width: 340px;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  width: 380px;
   text-align: center;
+  animation: fadeIn 0.5s ease-in;
 }
 .container h1 {
   margin-bottom: 8px;
-  color: #1e3a8a;
+  color: #667eea;
+  font-size: 28px;
+  font-weight: 700;
 }
 .container small {
-  color: #555;
+  color: #666;
+  font-size: 13px;
 }
 
 /* ==== INPUT BLOCK ==== */
 .block {
-  margin-top: 18px;
+  margin-top: 20px;
   text-align: left;
 }
 .block label {
   display: block;
   font-size: 14px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   color: #333;
+  font-weight: 600;
 }
 .block input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
   outline: none;
   font-size: 14px;
+  transition: border 0.3s;
+  box-sizing: border-box;
+}
+.block input:focus {
+  border-color: #667eea;
 }
 
 /* ==== BUTTON ==== */
 button {
-  margin-top: 20px;
+  margin-top: 24px;
   width: 100%;
-  padding: 12px;
-  background: #3b82f6;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
   color: #fff;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 16px;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: transform 0.2s, box-shadow 0.3s;
 }
 button:hover {
-  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 /* ==== DASHBOARD ==== */
 #dashboard {
   display: none;
   background: #fff;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-  width: 360px;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  width: 400px;
+  animation: fadeIn 0.5s ease-in;
 }
 #dashboard h2 {
-  margin-bottom: 16px;
-  color: #1e3a8a;
+  margin-bottom: 24px;
+  color: #667eea;
   text-align: center;
+  font-size: 26px;
+  font-weight: 700;
 }
 .link-block {
-  background: #f3f4f6;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 12px;
-  padding: 14px;
-  margin: 10px 0;
-  transition: transform 0.2s, background 0.3s;
+  padding: 16px;
+  margin: 12px 0;
+  transition: transform 0.2s, box-shadow 0.3s;
+  border-left: 4px solid #667eea;
 }
 .link-block a {
   text-decoration: none;
-  color: #1e40af;
+  color: #333;
+  font-weight: 600;
+  font-size: 16px;
+  display: block;
+}
+.link-block:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.dev-block {
+  margin-top: 24px;
+  padding: 18px;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  border-radius: 12px;
+  text-align: center;
+  border-left: 4px solid #ff6b6b;
+}
+.dev-block a {
+  text-decoration: none;
+  color: #d63031;
   font-weight: bold;
   font-size: 16px;
 }
-.link-block:hover {
-  background: #e0e7ff;
-  transform: translateY(-2px);
+
+/* ==== ANIMATIONS ==== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
-.dev-block {
+
+/* ==== LOGOUT BUTTON ==== */
+.logout-btn {
   margin-top: 20px;
-  padding: 16px;
-  background: #dbeafe;
-  border-radius: 12px;
-  text-align: center;
-}
-.dev-block a {
-  text-decoration: none;
-  color: #1e3a8a;
+  padding: 10px;
+  background: #ff6b6b;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  color: white;
   font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.logout-btn:hover {
+  background: #ee5a5a;
 }
 </style>
 </head>
@@ -120,21 +167,24 @@ button:hover {
 
 <!-- LOGIN -->
 <div class="container" id="loginBox">
-  <h1>Premier Admin</h1>
+  <h1>Premier Teacher </h1>
   <small>Authorized Access Only</small>
 
   <!-- Name & Password -->
   <div class="block">
     <label>Enter Name:</label>
     <input type="text" id="adminName" placeholder="Your Name">
-    <label style="margin-top:10px;">Enter Password:</label>
+  </div>
+  
+  <div class="block">
+    <label>Enter Password:</label>
     <input type="password" id="adminPass" placeholder="Password">
   </div>
 
   <!-- Dev Code -->
   <div class="block">
-    <label>Enter Dev Code:</label>
-    <input type="password" id="devCode" placeholder="Dev Code">
+    <label>Enter Dev Code (Optional):</label>
+    <input type="password" id="devCode" placeholder="Dev Code for Permanent Access">
   </div>
 
   <button onclick="login()">Login</button>
@@ -142,142 +192,16 @@ button:hover {
 
 <!-- DASHBOARD -->
 <div id="dashboard">
-  <h2>Admin Dashboard</h2>
-  <div class="link-block"><a href="admin0.html">Notice</a></div>
-  <div class="link-block"><a href="admin0.html">User Numbers</a></div>
-  <div class="link-block"><a href="admin0.html">User Names</a></div>
-<div class="link-block"><a href="database.html">Database</a></div>
-  <div class="link-block"><a href="admin4.html">User Data</a></div>
-  <div class="link-block"><a href="adminNotification.html">Perseonal Notifications</a></div>
-  <div class="link-block"><a href="admin6.html">Shayari</a></div>
-  <div class="dev-block"><a href="admin5.html">Developer</a></div>
-</div>
-
-<script>
-/* ==== CONFIG ==== */
-const CORRECT_PASSWORD = "GGY0FJI856";
-const DEV_CODE = "=load";
-const WEBHOOK = "https://discord.com/api/webhooks/1421051311012581398/vXpnuV__MgPYlsBq9kz6P4OSBNxFdq5cqYgoN07eobfh2P5EWVEkO_AoXv95HIBuK9L1";
-
-/* ==== GET CURRENT TIME ==== */
-function getCurrentTime() {
-  const now = new Date();
-  return now.toLocaleString();
-}
-
-/* ==== SHOW DASHBOARD ==== */
-function showDashboard() {
-  document.getElementById("loginBox").style.display = "none";
-  document.getElementById("dashboard").style.display = "block";
-}
-
-/* ==== WEBHOOK ==== */
-async function sendToWebhook(msg) {
-  try {
-    await fetch(WEBHOOK, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: msg })
-    });
-  } catch(err) {
-    console.error("Webhook Error:", err);
-  }
-}
-
-/* ==== LOGIN FUNCTION ==== */
-async function login() {
-  let name = document.getElementById("adminName").value.trim();
-  const pass = document.getElementById("adminPass").value.trim();
-  const dev = document.getElementById("devCode").value.trim();
-
-  if(!name || !pass) {
-    alert("Please fill name and password.");
-    return;
-  }
-
-  if(pass !== CORRECT_PASSWORD) {
-    alert("❌ Wrong password");
-    return;
-  }
-
-  // Save name in localStorage for future use
-  localStorage.setItem("adminName", name);
-
-  // Check if dev code entered for permanent login
-  if(dev === DEV_CODE) {
-    localStorage.setItem("permanentAdmin", "true");
-    alert("✅ Permanent Admin access granted on this device");
-    sendToWebhook(`Permanent Admin logged at ${getCurrentTime()} / ${name}`);
-  } else {
-    sendToWebhook(`Admin logged in at ${getCurrentTime()} / ${name}`);
-    alert("✅ Login Successful");
-  }
-
-  showDashboard();
-}
-
-/* ==== AUTO LOGIN IF PERMANENT ==== */
-window.addEventListener('load', () => {
-  const isPermanent = localStorage.getItem("permanentAdmin") === "true";
-  const savedName = localStorage.getItem("adminName");
-
-  if(savedName) document.getElementById("adminName").value = savedName;
-
-  if(isPermanent) {
-    sendToWebhook(`Permanent Admin auto-logged at ${getCurrentTime()} / ${savedName}`);
-    showDashboard();
-  }
-});
-</script>
-</body>
-</html>.dev-block {
-  margin-top: 20px;
-  padding: 16px;
-  background: #dbeafe;
-  border-radius: 12px;
-  text-align: center;
-}
-.dev-block a {
-  text-decoration: none;
-  color: #1e3a8a;
-  font-weight: bold;
-}
-</style>
-</head>
-<body>
-
-<!-- LOGIN -->
-<div class="container" id="loginBox">
-  <h1>Premier Admin</h1>
-  <small>Authorized Access Only</small>
-
-  <!-- Name & Password -->
-  <div class="block">
-    <label>Enter Name:</label>
-    <input type="text" id="adminName" placeholder="Your Name">
-    <label style="margin-top:10px;">Enter Password:</label>
-    <input type="password" id="adminPass" placeholder="Password">
-  </div>
-
-  <!-- Dev Code -->
-  <div class="block">
-    <label>Enter Dev Code:</label>
-    <input type="password" id="devCode" placeholder="Dev Code">
-  </div>
-
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard">
-  <h2>Admin Dashboard</h2>
-  <div class="link-block"><a href="admin1.html">Notice</a></div>
+  <h2>📊 Admin Dashboard</h2>
+  <div class="link-block"><a href="admin1.html"> Notice</a></div>
   <div class="link-block"><a href="admin2.html">User Numbers</a></div>
   <div class="link-block"><a href="admin3.html">User Names</a></div>
+  <div class="link-block"><a href="database.html">Database</a></div>
   <div class="link-block"><a href="admin4.html">User Data</a></div>
-  <div class="link-block"><a href="admin6.html">Shayari</a></div>
-  <div class="dev-block"><a href="database.html">Databse</a></div>
+  <div class="link-block"><a href="adminNotification.html">Personal Notifications</a></div>
+  <div class="link-block"><a href="admin6.html"> Shayari</a></div>
   <div class="dev-block"><a href="admin5.html">Developer</a></div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
 <script>
@@ -318,12 +242,12 @@ async function login() {
   const dev = document.getElementById("devCode").value.trim();
 
   if(!name || !pass) {
-    alert("Please fill name and password.");
+    alert(" Please fill all .");
     return;
   }
 
   if(pass !== CORRECT_PASSWORD) {
-    alert("❌ Wrong password");
+    alert("Nah Galat password ");
     return;
   }
 
@@ -334,13 +258,34 @@ async function login() {
   if(dev === DEV_CODE) {
     localStorage.setItem("permanentAdmin", "true");
     alert("✅ Permanent Admin access granted on this device");
-    sendToWebhook(`Permanent Admin logged at ${getCurrentTime()} / ${name}`);
+    sendToWebhook(`🔑 Permanent Admin logged at ${getCurrentTime()} / ${name}`);
   } else {
-    sendToWebhook(`Admin logged in at ${getCurrentTime()} / ${name}`);
+    sendToWebhook(`✅ Admin logged in at ${getCurrentTime()} / ${name}`);
     alert("✅ Login Successful");
   }
 
   showDashboard();
+}
+
+/* ==== LOGOUT FUNCTION ==== */
+function logout() {
+  if(confirm("Are you sure you want to logout?")) {
+    const savedName = localStorage.getItem("adminName");
+    sendToWebhook(`🚪 Admin logged out at ${getCurrentTime()} / ${savedName}`);
+    
+    // Clear permanent access
+    localStorage.removeItem("permanentAdmin");
+    
+    // Reset view
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("dashboard").style.display = "none";
+    
+    // Clear password field
+    document.getElementById("adminPass").value = "";
+    document.getElementById("devCode").value = "";
+    
+    alert("✅ Logged out successfully");
+  }
 }
 
 /* ==== AUTO LOGIN IF PERMANENT ==== */
@@ -351,14 +296,10 @@ window.addEventListener('load', () => {
   if(savedName) document.getElementById("adminName").value = savedName;
 
   if(isPermanent) {
-    sendToWebhook(`Permanent Admin auto-logged at ${getCurrentTime()} / ${savedName}`);
+    sendToWebhook(`🔄 Permanent Admin auto-logged at ${getCurrentTime()} / ${savedName}`);
     showDashboard();
   }
 });
 </script>
 </body>
 </html>
-
-
-
-
