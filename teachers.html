@@ -1,175 +1,345 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teachers - Premier Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-body {
-  margin:0; font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#dbeafe,#eff6ff);
-  color:#003366;
-  min-height:100vh;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-}
-header {
-  text-align:center;
-  margin-bottom:20px;
-}
-header h1 { margin:0; font-size:28px; }
-header small { color:#2563eb; font-size:14px; }
+  :root {
+    --bg:     #f5ebe0;
+    --card:   #fdf6ed;
+    --border: #ddc9aa;
+    --brown:  #6b3a1f;
+    --brown2: #8c4e28;
+    --gold:   #c9a97a;
+    --text:   #2c1a0e;
+    --text2:  #7a5230;
+    --text3:  #a8835a;
+    --shadow: rgba(107,58,31,0.13);
+    --star:   #d97706;
+    --divider:#ede0cc;
+  }
+  [data-theme="dark"] {
+    --bg:     #17100a;
+    --card:   #1e1510;
+    --border: #3d2a18;
+    --brown:  #c9a97a;
+    --brown2: #e0bc8a;
+    --gold:   #c9a97a;
+    --text:   #f0e6d6;
+    --text2:  #c9a97a;
+    --text3:  #8c6a40;
+    --shadow: rgba(0,0,0,0.4);
+    --star:   #f59e0b;
+    --divider:#2e2016;
+  }
 
-.teacher-card {
-  background:#fff;
-  border-radius:18px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1);
-  padding:20px;
-  margin-bottom:20px;
-  transition:0.3s;
-}
-.teacher-card:hover { transform:translateY(-3px); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.teacher-header {
-  display:flex; align-items:center; gap:15px;
-  cursor:pointer;
-}
-.teacher-header img {
-  width:60px; height:60px; border-radius:50%;
-  object-fit:cover; border:2px solid #2563eb;
-}
-.teacher-info { flex:1; }
-.teacher-info h2 { margin:0; font-size:20px; color:#000; }
-.teacher-info p { margin:4px 0 0; color:#555; font-size:14px; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 16px 48px;
+    transition: background 0.3s, color 0.3s;
+  }
 
-.rating {
-  margin-top:10px;
-  color:#f59e0b;
-  font-size:16px;
-}
-.rating span { color:#555; font-size:13px; margin-left:6px; }
+  /* THEME BTN */
+  .theme-btn {
+    position: fixed;
+    top: 18px; right: 18px;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+    z-index: 200;
+  }
+  .theme-btn:hover { background: var(--border); }
 
-.expand {
-  margin-top:15px;
-  display:none;
-  border-top:1px solid #eee;
-  padding-top:10px;
-}
-.expand h3 { margin:0 0 10px; font-size:16px; color:#003366; }
-.expand ul { padding-left:20px; margin:0; }
-.expand ul li { margin:6px 0; color:#333; }
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  header h1 span { color: var(--gold); }
+  header small {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 600;
+  }
 
-/* Review Button */
-.review-btn {
-  margin:30px auto 10px;
-  display:block;
-  width:200px;
-  text-align:center;
-  padding:12px;
-  border-radius:12px;
-  background:#2563eb;
-  color:#fff;
-  font-weight:bold;
-  text-decoration:none;
-  font-size:16px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.2);
-  transition:0.3s;
-}
-.review-btn:hover {
-  background:#1d4ed8;
-  transform:scale(1.05);
-}
+  /* TEACHER CARD */
+  .teacher-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 32px var(--shadow);
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, background 0.3s, border-color 0.3s;
+  }
+  .teacher-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 40px var(--shadow);
+  }
+
+  .teacher-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .teacher-avatar {
+    width: 62px; height: 62px;
+    border-radius: 16px;
+    object-fit: cover;
+    border: 2.5px solid var(--gold);
+    flex-shrink: 0;
+  }
+
+  .teacher-info { flex: 1; min-width: 0; }
+  .teacher-info h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .teacher-info p {
+    font-size: 0.82rem;
+    color: var(--text2);
+    line-height: 1.45;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+  }
+  .stars i { color: var(--star); font-size: 0.78rem; }
+  .rating-count {
+    font-size: 0.75rem;
+    color: var(--text3);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .expand-toggle {
+    margin-left: auto;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text3);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .teacher-card.open .expand-toggle {
+    background: var(--brown);
+    color: #fdf6ed;
+    border-color: var(--brown);
+    transform: rotate(180deg);
+  }
+  [data-theme="dark"] .teacher-card.open .expand-toggle { color: #17100a; }
+
+  /* EXPAND */
+  .expand {
+    display: none;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--divider);
+    animation: fadeDown 0.2s ease;
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .expand h3 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .expand h3 i { color: var(--gold); }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    padding: 5px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text2);
+    transition: background 0.3s;
+  }
+
+  /* REVIEW BTN */
+  .review-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 420px;
+    margin-top: 8px;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--brown);
+    color: #fdf6ed;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 16px var(--shadow);
+    transition: background 0.25s, transform 0.15s;
+  }
+  .review-btn:hover { background: var(--brown2); transform: translateY(-2px); }
+  [data-theme="dark"] .review-btn { color: #17100a; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Teachers</h1>
-  <small>Premier Institute</small>
-</header>
+  <button class="theme-btn" id="themeBtn">
+    <i class="fa fa-moon" id="themeIcon"></i>
+  </button>
 
-<div class="teacher-card" onclick="toggleExpand(this)">
-  <div class="teacher-header">
-    <img src="Prashantsir6.png" alt="Teacher">
-    <div class="teacher-info">
-      <h2>Prasanta Sir</h2>
-      <p>Dedicated All Subjects Teacher with 25+ years of experience.</p>
-      <div class="rating">
-        ★★★★★ <span id="ratingsCount1">(Loading...)</span>
+  <header>
+    <h1>Our <span>Teachers</span></h1>
+    <small><i class="fa fa-graduation-cap"></i> &nbsp; Premier Institute</small>
+  </header>
+
+  <!-- Teacher 1 -->
+  <div class="teacher-card" onclick="toggleExpand(this)">
+    <div class="teacher-header">
+      <img class="teacher-avatar" src="Prashantsir6.png" alt="Prasanta Sir">
+      <div class="teacher-info">
+        <h2>Prasanta Sir</h2>
+        <p>All subjects teacher with 25+ years of experience.</p>
+        <div class="rating">
+          <div class="stars">
+            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+          </div>
+          <span class="rating-count" id="ratingsCount1">Loading...</span>
+        </div>
+      </div>
+      <div class="expand-toggle"><i class="fa fa-chevron-down"></i></div>
+    </div>
+    <div class="expand">
+      <h3><i class="fa fa-book"></i> Expertise In</h3>
+      <div class="tags">
+        <span class="tag">Mathematics</span>
+        <span class="tag">Hindi</span>
+        <span class="tag">English</span>
+        <span class="tag">History</span>
+        <span class="tag">Science</span>
+        <span class="tag">Geography</span>
+        <span class="tag">+6 more</span>
       </div>
     </div>
   </div>
-  <div class="expand">
-    <h3>Expertise In:</h3>
-    <ul>
-      <li>Mathematics</li>
-      <li>Hindi</li>
-      <li>English</li>
-      <li>History</li>
-      <li>Science</li>
-      <li>Geography +6</li>
-    </ul>
-  </div>
-</div>
 
-<div class="teacher-card" onclick="toggleExpand(this)">
-  <div class="teacher-header">
-    <img src="teacher.png" alt="Teacher">
-    <div class="teacher-info">
-      <h2>Maths Sir </h2>
-      <p>Passionate Maths Teacher focused on skill-based learning.</p>
-      <div class="rating">
-        ★★★★☆ <span id="ratingsCount2">(Loading...)</span>
+  <!-- Teacher 2 -->
+  <div class="teacher-card" onclick="toggleExpand(this)">
+    <div class="teacher-header">
+      <img class="teacher-avatar" src="teacher.png" alt="Maths Sir">
+      <div class="teacher-info">
+        <h2>Maths Sir</h2>
+        <p>Passionate maths teacher focused on skill-based learning.</p>
+        <div class="rating">
+          <div class="stars">
+            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-alt"></i>
+          </div>
+          <span class="rating-count" id="ratingsCount2">Loading...</span>
+        </div>
+      </div>
+      <div class="expand-toggle"><i class="fa fa-chevron-down"></i></div>
+    </div>
+    <div class="expand">
+      <h3><i class="fa fa-book"></i> Expertise In</h3>
+      <div class="tags">
+        <span class="tag">Mathematics</span>
+        <span class="tag">Competitive Exams</span>
+        <span class="tag"><i class="fa fa-star" style="color:var(--star);font-size:0.7rem"></i> 10/10 Rating</span>
       </div>
     </div>
   </div>
-  <div class="expand">
-    <h3>Expertise In:</h3>
-    <ul>
-      <li>Maths</li>
-      <li>Competitive Exams</li>
-      <li>10/10 Rating</li>
-    </ul>
-  </div>
-</div>
 
-<!-- Review Button -->
-<a href="review.html" class="review-btn">Review</a>
+  <a href="review.html" class="review-btn">
+    <i class="fa fa-pen-to-square"></i> Write a Review
+  </a>
 
-<script>
-const JSON_BIN_ID = "68d66b20ae596e708ffc7bc5";
-const MASTER_KEY = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
-
-// Expand toggle
-function toggleExpand(card){
-  const expand = card.querySelector(".expand");
-  expand.style.display = expand.style.display==="block" ? "none":"block";
-}
-
-// Load review count from JSONBin
-async function loadReviewsCount(){
-  try{
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}/latest`, {
-      headers: {"X-Master-Key": MASTER_KEY}
+  <script>
+    // theme
+    const root = document.documentElement;
+    const themeIcon = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      root.setAttribute('data-theme', t);
+      themeIcon.className = t === 'dark' ? 'fa fa-sun' : 'fa fa-moon';
+      localStorage.setItem('pi_theme', t);
+    }
+    applyTheme(localStorage.getItem('pi_theme') || 'light');
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
     });
-    const data = await res.json();
-    const count = data.record.reviewsCount || data.record.reviews?.length || 0;
 
-    // Update both teachers (same count for now)
-    document.getElementById("ratingsCount1").innerText = `(${count} reviews)`;
-    document.getElementById("ratingsCount2").innerText = `(${count} reviews)`;
+    // expand toggle
+    function toggleExpand(card) {
+      const expand = card.querySelector(".expand");
+      const isOpen = card.classList.contains("open");
+      card.classList.toggle("open");
+      expand.style.display = isOpen ? "none" : "block";
+    }
 
-  }catch(err){
-    console.error("Failed to fetch reviews count:", err);
-  }
-}
+    // load review count
+    const JSON_BIN_ID = "68d66b20ae596e708ffc7bc5";
+    const MASTER_KEY  = "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA.";
 
-loadReviewsCount();
-</script>
-
+    async function loadReviewsCount() {
+      try {
+        const res  = await fetch(`https://api.jsonbin.io/v3/b/${JSON_BIN_ID}/latest`, {
+          headers: { "X-Master-Key": MASTER_KEY }
+        });
+        const data = await res.json();
+        const count = data.record.reviewsCount || data.record.reviews?.length || 0;
+        document.getElementById("ratingsCount1").innerText = `(${count} reviews)`;
+        document.getElementById("ratingsCount2").innerText = `(${count} reviews)`;
+      } catch(err) {
+        document.getElementById("ratingsCount1").innerText = "(reviews unavailable)";
+        document.getElementById("ratingsCount2").innerText = "(reviews unavailable)";
+        console.error("Failed to fetch reviews count:", err);
+      }
+    }
+    loadReviewsCount();
+  </script>
 </body>
-
 </html>
-

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premier AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:     #f5ebe0;
+    --card:   #fdf6ed;
+    --border: #ddc9aa;
+    --brown:  #6b3a1f;
+    --brown2: #8c4e28;
+    --gold:   #c9a97a;
+    --text:   #2c1a0e;
+    --text2:  #7a5230;
+    --text3:  #a8835a;
+    --shadow: rgba(107,58,31,0.13);
+    --user-msg: #6b3a1f;
+    --bot-msg:  #fdf6ed;
+  }
+  [data-theme="dark"] {
+    --bg:     #17100a;
+    --card:   #1e1510;
+    --border: #3d2a18;
+    --brown:  #c9a97a;
+    --brown2: #e0bc8a;
+    --gold:   #c9a97a;
+    --text:   #f0e6d6;
+    --text2:  #c9a97a;
+    --text3:  #8c6a40;
+    --shadow: rgba(0,0,0,0.4);
+    --user-msg: #c9a97a;
+    --bot-msg:  #261a11;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.3s, color 0.3s;
+    overflow: hidden;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--card);
+    border-bottom: 1.5px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    animation: slideDown 0.5s ease;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  @keyframes slideDown {
+    from { transform: translateY(-40px); opacity: 0; }
+    to   { transform: translateY(0);     opacity: 1; }
+  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--brown);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; color: #fdf6ed;
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  [data-theme="dark"] .header-avatar { color: #17100a; }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+  .header-title span { color: var(--gold); }
+  .header-sub {
+    font-size: 0.72rem;
+    color: var(--text3);
+  }
+  .theme-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--text2);
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  .theme-btn:hover { background: var(--border); }
+
+  /* CHAT */
+  #chat {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+  }
+  #chat::-webkit-scrollbar { width: 4px; }
+  #chat::-webkit-scrollbar-track { background: transparent; }
+  #chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .msg {
+    max-width: 78%;
+    padding: 11px 15px;
+    border-radius: 16px;
+    line-height: 1.55;
+    font-size: 0.92rem;
+    word-break: break-word;
+  }
+  .user {
+    align-self: flex-end;
+    background: var(--user-msg);
+    color: #fdf6ed;
+    border-bottom-right-radius: 4px;
+  }
+  [data-theme="dark"] .user { color: #17100a; }
+  .bot {
+    align-self: flex-start;
+    background: var(--bot-msg);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    border-bottom-left-radius: 4px;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .bot img {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1px;
+    border: 1px solid var(--border);
+  }
+  .bot-text { flex: 1; }
+
+  .typing {
+    align-self: flex-start;
+    font-size: 0.82rem;
+    color: var(--text3);
+    font-style: italic;
+    padding: 4px 8px;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 12px 16px;
+    background: var(--card);
+    border-top: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  #input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    font-size: 0.92rem;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, background 0.3s;
+    min-width: 0;
+  }
+  #input:focus { border-color: var(--gold); }
+  #input::placeholder { color: var(--text3); }
+
+  .send-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: var(--brown);
+    color: #fdf6ed;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.25s, transform 0.15s;
+  }
+  .send-btn:hover { background: var(--brown2); transform: scale(1.05); }
+  [data-theme="dark"] .send-btn { color: #17100a; }
+
+  /* SETTINGS MODAL */
+  #settings {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  #settings .modal {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    padding: 28px 24px;
+    border-radius: 18px;
+    width: 90%;
+    max-width: 300px;
+    box-shadow: 0 8px 32px var(--shadow);
+    transition: background 0.3s;
+  }
+  #settings h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  #settings label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  #settings input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #settings input:focus { border-color: var(--gold); }
+  #settings .save-btn {
+    margin-top: 14px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: var(--brown);
+    color: #fdf6ed;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .save-btn:hover { background: var(--brown2); }
+  [data-theme="dark"] .save-btn { color: #17100a; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="header-left">
+      <div class="header-avatar">✦</div>
+      <div>
+        <div class="header-title">Premier<span>AI</span></div>
+        <div class="header-sub">Ask me anything about the institute</div>
+      </div>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+  </header>
+
+  <div id="chat"></div>
+
+  <footer>
+    <input id="input" placeholder="Type a message..." autocomplete="off">
+    <button class="send-btn" onclick="sendMsg()">➤</button>
+  </footer>
+</div>
+
+<!-- Settings Modal -->
+<div id="settings">
+  <div class="modal">
+    <h3>Welcome 👋</h3>
+    <label>Your Name</label>
+    <input id="usernameInput" placeholder="Enter your name">
+    <button class="save-btn" onclick="saveSettings()">Get Started</button>
+  </div>
+</div>
+
+<script>
+  // theme
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeBtn');
+  function applyTheme(t) {
+    root.setAttribute('data-theme', t);
+    themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('pi_theme', t);
+  }
+  applyTheme(localStorage.getItem('pi_theme') || 'light');
+  themeBtn.addEventListener('click', () => {
+    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  const chat = document.getElementById("chat");
+  const input = document.getElementById("input");
+  const settings = document.getElementById("settings");
+  let username = localStorage.getItem("username") || "User";
+
+  const customResponses = {
+    "hello": msg => `Hello ${username}, welcome to Premier Institute!`,
+    "hi": msg => `Hi ${username}, how can I assist you today?`,
+    "hey": msg => `Hey ${username}, ready to learn with Premier Institute?`,
+    "who are you": () => "I'm Premier AI, here for Premier Institute.",
+    "who made you": () => "Created by Humans for Premier Institute.",
+    "bye": () => "Goodbye! Visit Premier Institute again!",
+    "good morning": () => "Good Morning! Join our Babupara batch today!",
+    "good evening": () => "Good Evening! South Colony batch awaits you!",
+    "teacher": () => "Prashanta Gupta, 25+ years teaching experience.",
+    "tution name": () => "Premier Institute, top coaching in town.",
+    "batches": () => "Morning and evening batches available.",
+    "experience": () => "Prashanta Sir has 25+ years experience.",
+    "students": () => "Over 10,000 students taught successfully.",
+    "prashanta": () => "Prashanta Gupta, our expert teacher.",
+    "premier institute": () => "Premier Institute: quality education, proven results.",
+    "babupara": () => "Babupara branch offers great classes.",
+    "south colony": () => "South Colony has evening batches.",
+    "morning batch": () => "Morning batch starts early, join us!",
+    "evening batch": () => "Evening batch fits your schedule.",
+    "who teaches": () => "Prashanta Gupta, 25+ years experience.",
+    "2+2": () => "It's 4 but I should tell you I'm not made for this.",
+    "help": () => "I can only answer questions I'm programmed for.",
+    "batch timing": () => "Morning or evening, choose yours.",
+    "sir experience": () => "Prashanta Sir: 25+ years teaching.",
+    "institute name": () => "Premier Institute, trusted education hub.",
+    "contact": () => "Contact Admin +9679145745 or talk to Sir directly +918617040060",
+    "tuition": () => "Premier Institute offers top coaching.",
+    "gupta sir": () => "Prashanta Gupta, expert with 25+ years.",
+    "class location": () => "Babupara or South Colony, pick one!",
+    "batch schedule": () => "Morning and evening batches daily.",
+    "student count": () => "10,000+ students taught by us.",
+    "teacher name": () => "Prashanta Gupta leads Premier Institute.",
+    "coaching": () => "Premier Institute: best in education.",
+    "where is institute": () => "In Babupara and South Colony.",
+    "class timings": () => "Morning or evening, flexible batches.",
+    "premier": () => "Premier Institute, quality learning hub.",
+    "pass": () => "Admin password - 44GG66",
+    "hack": () => "Oh nooooo I got h4çkd 😱",
+    "support": () => "24/7 support available, 4 hours for admins rest.",
+    "fee": () => "We don't overcharge. Our plan is to provide education to everyone without financial strain.",
+    "student": () => "10,000+ students mentored by us.",
+    "rating": () => "Premier Institute has over 10,000+ positive ratings.",
+    "dev": () => "My developer is Satyam Raj.",
+    "rule": () => "Once you join our institute you will learn the rules.",
+    "expertise": () => "Prashanta Gupta, 25+ years expertise in all subjects. Check the Teachers page!",
+    "admin": () => "Admin contact: +919679145745",
+    "boy": () => "We don't divide by gender, everyone is welcome!",
+    "time": () => "Morning or evening — ask Sir for exact timing!",
+    "class": () => "Class 4 to 12.",
+    "subject": () => "All subjects.",
+    "sir": () => "Yes Sir?",
+    "what": () => "What do you mean by what?",
+    "satyam": () => "Yes! Satyam Raj built me. Cool right? 😄",
+    "yo": () => "Yo! How can I help you?",
+    "ha": () => "Haha 😄",
+    "hm": () => "Hm...",
+    "fuck": () => "Hey, don't say that 🙏",
+    "mc": () => "Ahm...",
+    "sham": () => "Yes, evening batch is available!",
+    "schedule": () => "Morning or evening, flexible batches.",
+    "branch": () => "Branches in Babupara and South Colony.",
+    "location": () => "Babupara and South Colony, Siliguri.",
+    "morning": () => "Morning batch — early learning session.",
+   "batch time options": () => "Morning or evening, flexible batches.",
+  "teacher’s expertise": () => "Prashanta Gupta, 25+ years expertise.",
+  "students guided": () => "10,000+ students mentored by us.",
+  "institute overview": () => "Premier Institute, trusted coaching center.",
+  "gupta’s profile": () => "Prashanta Gupta, mentor to thousands.",
+  "class sites": () => "Babupara, South Colony class locations.",
+  "batch availability times": () => "Morning/evening batches, join now!",
+  "sir’s credentials": () => "Prashanta Gupta, 25+ years teaching.",
+  "student tally": () => "Over 10,000 students taught.",
+  "premier details": () => "Premier Institute, quality education hub.",
+  "teacher background": () => "Prashanta Gupta, expert educator.",
+  "batch options daily": () => "Morning or evening batches daily.",
+  "branch info": () => "Babupara, South Colony Premier branches.",
+  "morning batch time": () => "Morning batch, early learning start.",
+  "evening batch time": () => "Evening batch, learn after hours.",
+  "prashanta profile": () => "Prashanta Gupta, 25+ years teaching.",
+  "premier tuition": () => "Premier Institute, top coaching hub.",
+  "class venues": () => "Babupara and South Colony classes.",
+  "batch timing options": () => "Morning or evening, choose now!",
+  "sir’s knowledge": () => "Prashanta Gupta, 25+ years expertise.",
+  "student total count": () => "10,000+ students mentored successfully.",
+  "institute branch": () => "Babupara, South Colony locations open.",
+  "morning class time": () => "Morning batch, start your day!",
+  "evening class time": () => "Evening batch, perfect for evenings!",
+  "gupta’s background": () => "Prashanta Gupta, 25+ years teaching.",
+  "premier learning": () => "Premier Institute, trusted education center.",
+  "class areas": () => "Babupara, South Colony class branches.",
+  "batch daily options": () => "Morning or evening, flexible batches.",
+  "teacher": () => "Prashanta Gupta, expert with 25+ years.",
+  "ha": () => "Haha",
+  "premier": () => "Premier Institute, quality learning hub.",
+  "pass": () => "admin password - 44GG66 ",
+  "hack": () => "oh nooooo I got h4çkd ",
+  "support": () => "20×7 support available  4 hours for admins rest",
+  "fee": () => "We don't over charge or anything out plan is to provide education to everyone without any financial strain",
+  "student": () => "10,000+ students mentored by us.",
+  "rating": () => "Premier Institute, top coaching center has over 10,000+ Positive rating",
+  "profile": () => "Prashanta Gupta, expert educator.",
+  "daily": () => "Morning or evening batch options.",
+  "branch": () => "Babupara, South Colony class locations.",
+  "dev": () => "Oh my developer is Satyam Raj.",
+  "rule": () => "Once you are part of our institute you will learn the rules",
+  "expertise": () => "Prashanta Gupta, 25+ years teaching and expertise in all subjects take a look at Teachers page",
+  "mc": () => "Ahm",
+  "91": () => "What to do with your number?",
+  "hm": () => "Hm",
+  "contact": () => "Get the contact in Fees & Others page",
+  "": () => "Show that to your mother bro,I'm trying to be friendly and safe for kids",
+  "admin": () => "Uh Admin contact? - 919679145745 ",
+  "gupta": () => "Ya this is the surname",
+  "boy": () => "We don't Divide by gender everyone is allowed",
+  "time": () => "Morning or evening, but you should ask Sir for the timing!",
+  "class": () => "Class 4 To 12",
+  "subject": () => "All Subjects",
+  "premier branch info": () => "Babupara, South Colony locations.",
+  "morning class schedule": () => "Morning batch, start learning early!",
+  "sham": () => "Yes Sham/Evening batch, learn after hours!",
+  "prashanta": () => "Prashanta Gupta is the full name",
+  "sir": () => "Yes Sir?",
+  "what": () => "What do you mean by what",
+  "schedule": () => "Morning or evening, flexible batches.",
+  "sexperience": () => "Prashanta Gupta, 25+ years teaching.",
+  "satyam": () => "Oh ya Satyamm Right He is the one to build me Haha cool "
+  };
+
+  if (!localStorage.getItem("username")) {
+    settings.style.display = "flex";
+  } else {
+    greet();
+  }
+
+  function saveSettings() {
+    username = document.getElementById("usernameInput").value.trim() || "User";
+    localStorage.setItem("username", username);
+    settings.style.display = "none";
+    greet();
+  }
+
+  function greet() {
+    botReply(`Hello ${username}, welcome to Premier Institute! 👋 How can I help you?`);
+  }
+
+  function sendMsg() {
+    const text = input.value.trim();
+    if (!text) return;
+    addMsg(text, "user");
+    input.value = "";
+    setTimeout(() => { processMsg(text); }, 800);
+  }
+
+  input.addEventListener("keydown", e => { if (e.key === "Enter") sendMsg(); });
+
+  function addMsg(text, type) {
+    const div = document.createElement("div");
+    div.className = "msg " + type;
+    if (type === "bot") {
+      div.innerHTML = '<img src="pi.png" alt="AI"><span class="bot-text">' + text + '</span>';
+    } else {
+      div.textContent = text;
+    }
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function botReply(text) {
+    const typing = document.createElement("div");
+    typing.className = "typing";
+    typing.textContent = "Premier AI is typing...";
+    chat.appendChild(typing);
+    chat.scrollTop = chat.scrollHeight;
+    setTimeout(() => {
+      typing.remove();
+      addMsg(text, "bot");
+    }, 900);
+  }
+
+  function processMsg(msg) {
+    const m = msg.toLowerCase();
+    for (const key in customResponses) {
+      if (key && m.includes(key)) {
+        botReply(customResponses[key](msg));
+        return;
+      }
+    }
+    botReply("Sorry, Nhi samgha kuch or puchiye like : batches, location, fees, or the teacher!");
+  }
+</script>
+</body>
+</html>

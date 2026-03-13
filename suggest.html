@@ -1,168 +1,289 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Premier Institute — Suggestions</title>
+<title>Suggestions - Premier Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* ===== Professional Theme ===== */
-body {
-  margin:0;
-  font-family: "Segoe UI", Tahoma, sans-serif;
-  background:#f5f7fa;
-  color:#222;
-  line-height:1.6;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:30px 15px;
-}
+  :root {
+    --bg:     #f5ebe0;
+    --card:   #fdf6ed;
+    --border: #ddc9aa;
+    --brown:  #6b3a1f;
+    --brown2: #8c4e28;
+    --gold:   #c9a97a;
+    --text:   #2c1a0e;
+    --text2:  #7a5230;
+    --text3:  #a8835a;
+    --shadow: rgba(107,58,31,0.13);
+    --input:  #fdf6ed;
+  }
+  [data-theme="dark"] {
+    --bg:     #17100a;
+    --card:   #1e1510;
+    --border: #3d2a18;
+    --brown:  #c9a97a;
+    --brown2: #e0bc8a;
+    --gold:   #c9a97a;
+    --text:   #f0e6d6;
+    --text2:  #c9a97a;
+    --text3:  #8c6a40;
+    --shadow: rgba(0,0,0,0.4);
+    --input:  #261a11;
+  }
 
-h1 {
-  font-size:28px;
-  margin-bottom:25px;
-  font-weight:700;
-  color:#1a237e;
-  text-align:center;
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.block {
-  background:#fff;
-  border-radius:12px;
-  padding:25px;
-  width:95%;
-  max-width:650px;
-  box-shadow:0 4px 16px rgba(0,0,0,0.1);
-  margin-bottom:25px;
-  border:1px solid #e0e0e0;
-}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 16px 48px;
+    transition: background 0.3s, color 0.3s;
+  }
 
-.block h2 {
-  margin-bottom:15px;
-  font-size:22px;
-  color:#0d47a1;
-  text-align:left;
-  border-left:5px solid #2196f3;
-  padding-left:10px;
-}
+  .theme-btn {
+    position: fixed;
+    top: 18px; right: 18px;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+    z-index: 200;
+  }
+  .theme-btn:hover { background: var(--border); }
 
-label {
-  display:block;
-  margin:12px 0 6px;
-  font-weight:600;
-  color:#333;
-}
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  header h1 span { color: var(--gold); }
+  header small {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 600;
+  }
 
-input, select, textarea {
-  width:100%;
-  padding:12px;
-  border:1px solid #bbb;
-  border-radius:6px;
-  font-size:15px;
-  transition:border 0.2s;
-}
-input:focus, select:focus, textarea:focus {
-  border-color:#2196f3;
-  outline:none;
-}
-textarea { resize:vertical; }
+  .block {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 8px 32px var(--shadow);
+    transition: background 0.3s, border-color 0.3s;
+  }
 
-button {
-  margin-top:18px;
-  padding:12px;
-  width:100%;
-  background:#1976d2;
-  border:none;
-  border-radius:6px;
-  color:white;
-  font-size:16px;
-  font-weight:600;
-  cursor:pointer;
-  transition:background 0.3s;
-}
-button:hover { background:#0d47a1; }
+  .block-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 6px;
+  }
+  .block-label i { color: var(--gold); }
 
-/* Slide-in Message */
-.message {
-  position:fixed;
-  top:20px;
-  left:-100%;
-  padding:15px 20px;
-  border-radius:6px;
-  font-weight:600;
-  color:#fff;
-  box-shadow:0 4px 10px rgba(0,0,0,0.2);
-  transition:left 0.6s ease;
-  z-index:999;
-}
-.message.show { left:20px; }
-.message.success { background:#4caf50; }
-.message.error { background:#f44336; }
+  .block h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .block-note {
+    font-size: 0.83rem;
+    color: var(--text3);
+    line-height: 1.55;
+    margin-bottom: 22px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .block-note i { color: var(--gold); margin-right: 5px; }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--input);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    outline: none;
+    transition: border-color 0.2s, background 0.3s;
+    appearance: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+  textarea { resize: vertical; min-height: 130px; }
+  select { cursor: pointer; }
+  input::placeholder, textarea::placeholder { color: var(--text3); }
+
+  .submit-btn {
+    margin-top: 6px;
+    width: 100%;
+    padding: 13px;
+    background: var(--brown);
+    color: #fdf6ed;
+    border: none;
+    border-radius: 11px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background 0.25s, transform 0.15s;
+  }
+  .submit-btn:hover { background: var(--brown2); transform: translateY(-1px); }
+  [data-theme="dark"] .submit-btn { color: #17100a; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    top: 20px; left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #fff;
+    z-index: 9999;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: #2e7d32; }
+  .toast.error   { background: #c0392b; }
 </style>
 </head>
 <body>
 
-<h1>Premier Institute</h1>
+  <button class="theme-btn" id="themeBtn">
+    <i class="fa fa-moon" id="themeIcon"></i>
+  </button>
 
-<div class="block">
-  <h2>Suggestions</h2>
-  <p>Please share your suggestions. We value your input.Do not try to our-smart the system we prepared for everything and only accept the suggestion with vaild reasons</p>
+  <header>
+    <h1>Premier<span>Institute</span></h1>
+    <small><i class="fa fa-lightbulb"></i> &nbsp; Suggestions</small>
+  </header>
 
-  <form id="suggestionForm">
-    <label>Name (Optional)</label>
-    <input type="text" name="Name">
+  <div class="block">
+    <div class="block-label"><i class="fa fa-comment-dots"></i> Share Your Thoughts</div>
+    <h2>Send a Suggestion</h2>
+    <div class="block-note">
+      <i class="fa fa-circle-info"></i>
+      We value your suggestions,s. Please share suggestions with valid reasons. Do not try to outsmart the system — 
+    </div>
 
-    <label>You are?</label>
-    <select name="Role" required>
-      <option value="">Select</option>
-      <option>Student</option>
-      <option>Teacher</option>
-      <option>Visitor</option>
-      <option>Admin</option>
-    </select>
+    <form id="suggestionForm">
+      <div class="field">
+        <label><i class="fa fa-user" style="margin-right:5px;color:var(--gold)"></i> Your Name <span style="color:var(--text3);font-weight:400">(optional)</span></label>
+        <input type="text" name="Name" placeholder="Enter your name">
+      </div>
 
-    <label>Type your suggestion</label>
-    <textarea name="Suggestion" rows="6" maxlength="1000" required></textarea>
+      <div class="field">
+        <label><i class="fa fa-id-badge" style="margin-right:5px;color:var(--gold)"></i> You are?</label>
+        <select name="Role" required>
+          <option value="">Select your role</option>
+          <option>Student</option>
+          <option>Teacher</option>
+          <option>Visitor</option>
+          <option>Admin</option>
+        </select>
+      </div>
 
-    <button type="submit">Submit Suggestion</button>
-  </form>
-</div>
+      <div class="field">
+        <label><i class="fa fa-pen-to-square" style="margin-right:5px;color:var(--gold)"></i> Your Suggestion</label>
+        <textarea name="Suggestion" maxlength="1000" required placeholder="Write your suggestion here..."></textarea>
+      </div>
 
-<!-- Slide-in Messages -->
-<div id="msgBox" class="message"></div>
+      <button type="submit" class="submit-btn">
+        <i class="fa fa-paper-plane"></i> Submit Suggestion
+      </button>
+    </form>
+  </div>
 
-<script>
-// ===== FORM SUBMIT TO DISCORD WEBHOOK =====
-const form = document.getElementById("suggestionForm");
-const msgBox = document.getElementById("msgBox");
+  <div class="toast" id="toast"></div>
 
-form.addEventListener("submit", function(e){
-  e.preventDefault();
+  <script>
+    // theme
+    const root = document.documentElement;
+    const themeIcon = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      root.setAttribute('data-theme', t);
+      themeIcon.className = t === 'dark' ? 'fa fa-sun' : 'fa fa-moon';
+      localStorage.setItem('pi_theme', t);
+    }
+    applyTheme(localStorage.getItem('pi_theme') || 'light');
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
 
-  const formData = new FormData(this);
-  let message = "**💡 New Suggestion Received**\n\n";
-  formData.forEach((v,k)=> message += `**${k}:** ${v}\n`);
+    // toast
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.innerHTML = `<i class="fa fa-${type === 'success' ? 'check-circle' : 'circle-xmark'}"></i> ${msg}`;
+      t.className = `toast ${type} show`;
+      setTimeout(() => t.classList.remove('show'), 4000);
+    }
 
-  fetch("https://discord.com/api/webhooks/1421051311012581398/vXpnuV__MgPYlsBq9kz6P4OSBNxFdq5cqYgoN07eobfh2P5EWVEkO_AoXv95HIBuK9L1", { 
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ content: message })
-  }).then(res=>{
-    showMessage("✅ Suggestion submitted successfully!", "success");
-    this.reset();
-  }).catch(err=>{
-    showMessage("❌ Error sending suggestion!", "error");
-    console.error(err);
-  });
-});
+    // form submit
+    const form = document.getElementById("suggestionForm");
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      let message = "**💡 New Suggestion Received**\n\n";
+      formData.forEach((v, k) => message += `**${k}:** ${v}\n`);
 
-// ===== SHOW MESSAGE FUNCTION =====
-function showMessage(text, type){
-  msgBox.textContent = text;
-  msgBox.className = `message ${type} show`;
-  setTimeout(()=> { msgBox.classList.remove("show"); }, 4000);
-}
-</script>
-
+      fetch("https://discord.com/api/webhooks/1421051311012581398/vXpnuV__MgPYlsBq9kz6P4OSBNxFdq5cqYgoN07eobfh2P5EWVEkO_AoXv95HIBuK9L1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: message })
+      }).then(() => {
+        showToast("Suggestion submitted successfully!", "success");
+        this.reset();
+      }).catch(err => {
+        showToast("Error sending suggestion. Try again.", "error");
+        console.error(err);
+      });
+    });
+  </script>
 </body>
 </html>

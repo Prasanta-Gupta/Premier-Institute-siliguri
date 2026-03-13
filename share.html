@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share - Premier Institute</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:     #f5ebe0;
+    --card:   #fdf6ed;
+    --border: #ddc9aa;
+    --brown:  #6b3a1f;
+    --brown2: #8c4e28;
+    --gold:   #c9a97a;
+    --text:   #2c1a0e;
+    --text2:  #7a5230;
+    --text3:  #a8835a;
+    --shadow: rgba(107,58,31,0.13);
+  }
+  [data-theme="dark"] {
+    --bg:     #17100a;
+    --card:   #1e1510;
+    --border: #3d2a18;
+    --brown:  #c9a97a;
+    --brown2: #e0bc8a;
+    --gold:   #c9a97a;
+    --text:   #f0e6d6;
+    --text2:  #c9a97a;
+    --text3:  #8c6a40;
+    --shadow: rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: background 0.3s, color 0.3s;
+    animation: fadeIn 0.8s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .theme-btn {
+    position: fixed;
+    top: 18px; right: 18px;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+    z-index: 200;
+  }
+  .theme-btn:hover { background: var(--border); }
+
+  .share-container {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    padding: 40px 32px;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px var(--shadow);
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .share-icon {
+    width: 90px; height: 90px;
+    margin: 0 auto 24px;
+    background: var(--brown);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 6px 20px var(--shadow);
+    transition: background 0.3s;
+  }
+  .share-icon i { font-size: 38px; color: #fdf6ed; }
+  [data-theme="dark"] .share-icon i { color: #17100a; }
+
+  .title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+
+  .institute-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+    transition: color 0.3s;
+  }
+  .institute-name span { color: var(--gold); }
+
+  .tagline {
+    font-size: 0.9rem;
+    color: var(--text3);
+    font-style: italic;
+    margin-bottom: 32px;
+  }
+
+  .share-btn {
+    background: var(--brown);
+    color: #fdf6ed;
+    border: none;
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.25s;
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 4px 16px var(--shadow);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .share-btn:hover { background: var(--brown2); transform: translateY(-2px); }
+  .share-btn i { font-size: 1rem; }
+
+  .success-message {
+    display: none;
+    background: var(--brown);
+    color: #fdf6ed;
+    padding: 13px;
+    margin-top: 16px;
+    font-weight: 600;
+    border-radius: 11px;
+    font-size: 0.88rem;
+    transition: background 0.3s;
+  }
+  .success-message.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  [data-theme="dark"] .success-message { background: var(--gold); color: #17100a; }
+</style>
+</head>
+<body>
+
+<button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+
+<div class="share-container">
+  <div class="share-icon">
+    <i class="fas fa-share-alt"></i>
+  </div>
+
+  <p class="title">Spread the word</p>
+  <h2 class="institute-name">P<span>I</span></h2>
+  <p class="tagline">A Step Towards Modern Era</p>
+
+  <button class="share-btn" id="shareBtn">
+    <i class="fas fa-share-nodes"></i>
+    Share Now
+  </button>
+
+  <div class="success-message" id="successMsg">
+    <i class="fas fa-check-circle"></i> Shared successfully!
+  </div>
+</div>
+
+<script>
+  // theme
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeBtn');
+  function applyTheme(t) {
+    root.setAttribute('data-theme', t);
+    themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('pi_theme', t);
+  }
+  applyTheme(localStorage.getItem('pi_theme') || 'light');
+  themeBtn.addEventListener('click', () => {
+    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // share logic (unchanged)
+  const shareBtn = document.getElementById('shareBtn');
+  const successMsg = document.getElementById('successMsg');
+
+  const shareText = `Hello!
+
+Looking for tuitions for your child?
+Try Premier Institute
+
+https://premiere-institute.in
+
+The best and supportive institute for children from class 4 to 12th
+All Boards
+
+Contact us on website or
++91 86170 40060
+WhatsApp/Call`;
+
+  shareBtn.addEventListener('click', async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Premier Institute', text: shareText });
+        successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Shared successfully!';
+        successMsg.classList.add('show');
+        setTimeout(() => successMsg.classList.remove('show'), 3000);
+      } catch (err) {
+        if (err.name !== 'AbortError') { fallbackShare(); }
+      }
+    } else {
+      fallbackShare();
+    }
+  });
+
+  function fallbackShare() {
+    navigator.clipboard.writeText(shareText).then(() => {
+      successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Copied to clipboard!';
+      successMsg.classList.add('show');
+      setTimeout(() => {
+        successMsg.classList.remove('show');
+        successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Shared successfully!';
+      }, 3000);
+    }).catch(() => {
+      alert('Please copy the message manually');
+    });
+  }
+</script>
+</body>
+</html>
