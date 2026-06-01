@@ -1,362 +1,489 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<title>Notifications</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premier Institute — Notifications</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<style>
-body{
-  margin:0;
-  font-family:"Segoe UI",sans-serif;
-  background:#f5f7fa;
-  padding:15px;
-  padding-bottom:60px;
-}
+  <style>
+    :root {
+      --cream:      #fdf6ed;
+      --cream2:     #f5ebe0;
+      --cream3:     #ede0cc;
+      --gold:       #c9a97a;
+      --gold2:      #b8935f;
+      --brown:      #6b3a1f;
+      --brown2:     #8c4e28;
+      --brown-dark: #3b1f0a;
+      --text:       #2c1a0e;
+      --text2:      #7a5230;
+      --text3:      #a8835a;
+      --border:     #ddc9aa;
+      --shadow:     rgba(107,58,31,0.12);
+      --bg:         #f5ebe0;
+      --card:       #fdf6ed;
+    }
+    [data-theme="dark"] {
+      --cream:      #1e1510;
+      --cream2:     #261a11;
+      --cream3:     #2e2016;
+      --gold:       #c9a97a;
+      --gold2:      #b8935f;
+      --brown:      #c9a97a;
+      --brown2:     #e0bc8a;
+      --brown-dark: #f5ebe0;
+      --text:       #f0e6d6;
+      --text2:      #c9a97a;
+      --text3:      #8c6a40;
+      --border:     #3d2a18;
+      --shadow:     rgba(0,0,0,0.4);
+      --bg:         #17100a;
+      --card:       #1e1510;
+    }
 
-h1{
-  text-align:center;
-  color:#1a237e;
-  font-size:20px;
-  margin-bottom:15px;
-}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
-.box{
-  background:#fff;
-  padding:15px;
-  border-radius:12px;
-  max-width:380px;
-  margin:15px auto;
-  box-shadow:0 4px 14px rgba(0,0,0,0.12);
-  border:1px solid #ddd;
-  font-size:13px;
-}
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 72px;
+      transition: background 0.4s, color 0.4s;
+      overflow-x: hidden;
+    }
 
-.box h3{
-  margin:5px 0 10px;
-  font-size:15px;
-  color:#0d47a1;
-}
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.4;
+    }
 
-input{
-  width:100%;
-  padding:10px;
-  border:1px solid #bbb;
-  border-radius:6px;
-  margin-top:5px;
-  font-size:13px;
-}
+    /* ── TOPBAR ── */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; height: 62px;
+      backdrop-filter: blur(16px);
+      transition: background 0.4s, border-color 0.4s;
+    }
+    .topbar-left  { display: flex; align-items: center; gap: 12px; }
+    .topbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--brown-dark); transition: color 0.4s;
+    }
+    .topbar-brand span { color: var(--gold2); }
+    .topbar-right { display: flex; gap: 10px; align-items: center; }
 
-button{
-  width:100%;
-  margin-top:12px;
-  padding:10px;
-  background:#1976d2;
-  color:#fff;
-  border:none;
-  border-radius:6px;
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
-  box-shadow:0 3px 10px rgba(0,0,0,0.15);
-  transition:background 0.3s ease;
-}
+    .icon-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--cream2); color: var(--text2);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; transition: all 0.25s;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .icon-btn:hover { background: var(--cream3); color: var(--brown); border-color: var(--gold); }
 
-button:hover{
-  background:#1565c0;
-}
+    /* ── CONTAINER ── */
+    .container {
+      position: relative; z-index: 1;
+      max-width: 560px; margin: 0 auto;
+      padding: 82px 20px 24px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
 
-.notice{
-  padding:12px;
-  margin:10px 0;
-  border-radius:8px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.12);
-  font-size:13px;
-  position:relative;
-  transition:all 0.3s ease;
-}
+    /* ── PAGE TITLE ── */
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--gold2);
+      margin-bottom: 6px; display: block;
+    }
+    .page-h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem; font-weight: 700;
+      color: var(--brown-dark); line-height: 1.2;
+    }
+    .page-h1 em { font-style: italic; color: var(--gold2); }
 
-.notice:hover{
-  transform:translateY(-2px);
-  box-shadow:0 5px 15px rgba(0,0,0,0.18);
-}
+    /* ── BLOCK ── */
+    .block {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 4px 16px var(--shadow);
+      transition: background 0.4s, border-color 0.4s;
+    }
+    .block h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 600;
+      color: var(--brown-dark);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .block h2 i { color: var(--gold2); font-size: 0.85rem; }
 
-.newNote{
-  background:#fff7e0;
-  border-left:5px solid #ff9800;
-  animation:slideIn 0.4s ease;
-}
+    /* user pill */
+    .user-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--cream2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem; color: var(--text2);
+    }
+    .user-pill i { color: var(--gold2); }
+    .user-pill strong { color: var(--brown-dark); }
 
-.oldNote{
-  background:#e9f2ff;
-  border-left:5px solid #0b84ff;
-  opacity:0.85;
-}
+    /* ── INPUT ── */
+    .field-label {
+      font-size: 0.68rem; font-family: 'DM Mono', monospace;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text3); margin-bottom: 6px; display: block;
+    }
+    .input-wrap { position: relative; margin-bottom: 14px; }
+    .input-wrap i.prefix {
+      position: absolute; left: 13px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3); font-size: 0.82rem; pointer-events: none;
+    }
+    .rx-input {
+      width: 100%; padding: 11px 14px 11px 36px;
+      background: var(--cream2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+      outline: none; transition: border 0.2s, background 0.4s;
+    }
+    .rx-input:focus { border-color: var(--gold); background: var(--cream); }
+    .rx-input::placeholder { color: var(--text3); }
 
-.notice strong{
-  display:block;
-  margin-bottom:6px;
-  color:#333;
-}
+    /* ── BUTTON ── */
+    .rx-btn {
+      width: 100%; padding: 13px;
+      background: var(--brown); color: #fdf6ed;
+      border: none; border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px var(--shadow);
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+    }
+    .rx-btn:hover { background: var(--brown2); transform: translateY(-2px); }
+    [data-theme="dark"] .rx-btn { background: var(--gold2); color: #1e1510; }
+    [data-theme="dark"] .rx-btn:hover { background: var(--brown2); color: #fdf6ed; }
 
-.notice .date{
-  font-size:11px;
-  color:#666;
-  margin-top:6px;
-  font-style:italic;
-}
+    /* ── NOTICE CARDS ── */
+    .notice {
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      position: relative;
+      transition: transform 0.25s, box-shadow 0.25s;
+      animation: slideIn 0.4s ease;
+    }
+    .notice:last-child { margin-bottom: 0; }
+    .notice:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow); }
 
-.badge{
-  position:absolute;
-  top:8px;
-  right:8px;
-  background:#ff5252;
-  color:#fff;
-  font-size:10px;
-  padding:3px 8px;
-  border-radius:12px;
-  font-weight:600;
-  text-transform:uppercase;
-}
+    .notice.newNote {
+      background: var(--cream2);
+      border: 1.5px solid var(--gold);
+      border-left: 4px solid var(--gold2);
+    }
+    .notice.oldNote {
+      background: var(--cream2);
+      border: 1.5px solid var(--border);
+      border-left: 4px solid var(--border);
+      opacity: 0.85;
+    }
 
-.none{
-  text-align:center;
-  padding:20px;
-  color:#888;
-  font-size:13px;
-}
+    .notice .notice-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text3);
+      margin-bottom: 4px; display: block;
+    }
+    .notice .notice-msg {
+      font-size: 0.92rem; font-weight: 500;
+      color: var(--brown-dark); margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .notice .notice-contact {
+      font-size: 0.8rem; color: var(--text2);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .notice .notice-contact i { color: var(--gold2); }
+    .notice .notice-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem; color: var(--text3);
+      margin-top: 8px; display: flex; align-items: center; gap: 5px;
+    }
 
-/* FOOTER STATUS */
-.footer{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#fff;
-  border-top:1px solid #ddd;
-  padding:8px 15px;
-  font-size:11px;
-  color:#666;
-  text-align:center;
-  box-shadow:0 -2px 8px rgba(0,0,0,0.08);
-  z-index:1000;
-}
+    .badge {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--brown); color: #fdf6ed;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem; padding: 3px 9px;
+      border-radius: 20px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    [data-theme="dark"] .badge { background: var(--gold2); color: #1e1510; }
 
-.footer.success{
-  background:#e8f5e9;
-  color:#2e7d32;
-  border-top:1px solid #81c784;
-}
+    .none {
+      text-align: center; padding: 28px 16px;
+      color: var(--text3);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+    }
+    .none i { font-size: 1.8rem; display: block; margin-bottom: 10px; color: var(--border); }
 
-.footer.error{
-  background:#ffebee;
-  color:#c62828;
-  border-top:1px solid #ef5350;
-}
+    /* ── FOOTER STATUS BAR ── */
+    .footer-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 10px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; color: var(--text3);
+      text-align: center;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      transition: all 0.3s ease;
+      animation: fadeUp 0.3s ease;
+    }
+    .footer-bar.success { background: #eaf6ed; color: #1a6630; border-top-color: #a8d5b0; }
+    .footer-bar.error   { background: #fde8e8; color: #8b1a1a; border-top-color: #e0a0a0; }
+    .footer-bar.warning { background: #fdf4dc; color: #7a5a00; border-top-color: #e8d080; }
+    [data-theme="dark"] .footer-bar.success { background: #0e2414; color: #6dbb82; border-top-color: #1e4a28; }
+    [data-theme="dark"] .footer-bar.error   { background: #2a0a0a; color: #e07070; border-top-color: #4a1a1a; }
+    [data-theme="dark"] .footer-bar.warning { background: #2a2000; color: #d4aa30; border-top-color: #4a3800; }
 
-.footer.warning{
-  background:#fff3e0;
-  color:#e65100;
-  border-top:1px solid #ffb74d;
-}
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-@keyframes slideIn{
-  from{
-    opacity:0;
-    transform:translateX(-20px);
-  }
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-}
-
-@keyframes fadeIn{
-  from{
-    opacity:0;
-    transform:translateY(10px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-.footer{
-  animation:fadeIn 0.3s ease;
-}
-</style>
+    @media (max-width: 480px) {
+      .container { padding: 76px 14px 24px; }
+      .topbar    { padding: 0 14px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<h1>Notifications</h1>
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <div class="topbar-left">
+      <a href="ban.html" class="icon-btn" title="Back">
+        <i class="fa fa-arrow-left"></i>
+      </a>
+      <div class="topbar-brand">Premier<span>Institute</span></div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">
+        <i class="fa fa-moon" id="themeIcon"></i>
+      </button>
+    </div>
+  </nav>
 
-<!-- ASK NAME -->
-<div id="askBox" class="box" style="display:none;">
-  <h3>Enter Username</h3>
-  <input id="nameInput" type="text" placeholder="Type your exact username">
-  <button onclick="registerUser()">Save</button>
-</div>
+  <!-- CONTENT -->
+  <div class="container">
 
-<!-- MAIN -->
-<div id="mainBox" class="box" style="display:none;">
-  <div><b>Username:</b> <span id="userShow"></span></div>
+    <!-- Page heading -->
+    <div>
+      <span class="eyebrow"><i class="fa fa-bell"></i> &nbsp;Updates</span>
+      <h1 class="page-h1">Your <em>Notifications</em></h1>
+    </div>
 
-  <h3 style="margin-top:15px;">Notifications</h3>
-  <div id="notiList"></div>
-</div>
-
-<!-- FOOTER STATUS -->
-<div id="footer" class="footer"></div>
-
-<script>
-/* JSONBIN CONFIG */
-const binBase = "https://api.jsonbin.io/v3/b/6958dfa8ae596e708fc1dd48";
-const binGet = binBase + "/latest";
-const headers = {
-  "X-Master-Key": "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA."
-};
-
-/* LOCAL STORAGE KEYS FROM PROFILE PAGE */
-const PROFILE_DATA_KEY = "currentUser"; // The object key from your profile page
-const SAVE_KEY = "username";            // Fallback key
-
-let currentUser = "";
-
-/* FOOTER STATUS HELPER */
-function showFooter(message, type = ""){
-  const footer = document.getElementById("footer");
-  footer.textContent = message;
-  footer.className = "footer " + type;
-}
-
-/* START */
-window.onload = async () => {
-  let username = null;
-
-  // 1. Try to get name from the Profile Page's LocalStorage object
-  const profileData = localStorage.getItem(PROFILE_DATA_KEY);
-  if (profileData) {
-    const parsedData = JSON.parse(profileData);
-    if (parsedData.Name) {
-      username = parsedData.Name.trim();
-    }
-  }
-
-  // 2. Fallback to simple 'username' key if profile object doesn't exist
-  if (!username) {
-    username = localStorage.getItem(SAVE_KEY);
-  }
-
-  /* If no username found anywhere, ask for name */
-  if(!username){
-    document.getElementById("askBox").style.display = "block";
-    showFooter("⚠️ No profile name found. Please register.", "warning");
-    return;
-  }
-
-  /* Set current user and show UI */
-  currentUser = username;
-  document.getElementById("mainBox").style.display = "block";
-  document.getElementById("userShow").innerText = username;
-  showFooter(`✓ Logged in as: ${username}`, "success");
-
-  /* Load notifications */
-  loadNotifications();
-  setInterval(loadNotifications, 10000);
-};
-
-/* REGISTER USER (If not found in Profile) */
-async function registerUser(){
-  let name = document.getElementById("nameInput").value.trim();
-  if(!name){ 
-    showFooter("❌ Enter valid name", "error");
-    return; 
-  }
-
-  try{
-    showFooter("⏳ Saving...", "");
-
-    /* Save to both formats to ensure compatibility */
-    localStorage.setItem(SAVE_KEY, name);
-    
-    // Create the profile object structure so the Profile page can also see it
-    const profileObj = JSON.parse(localStorage.getItem(PROFILE_DATA_KEY) || "{}");
-    profileObj.Name = name;
-    localStorage.setItem(PROFILE_DATA_KEY, JSON.stringify(profileObj));
-
-    currentUser = name;
-
-    const res = await fetch(binGet,{headers});
-    let arr = (await res.json()).record;
-    if(!Array.isArray(arr)) arr=[arr];
-
-    const exists = arr.find(u => u.user.toLowerCase() === name.toLowerCase());
-
-    if(!exists){
-      arr.push({
-        user: name,
-        notice: "",
-        contact: "",
-        date: "",
-        seen: false
-      });
-
-      await fetch(binBase,{
-        method:"PUT",
-        headers:{ "Content-Type":"application/json", ...headers },
-        body:JSON.stringify(arr)
-      });
-    }
-
-    showFooter(";) Name saved successfully!", "success");
-    setTimeout(() => location.reload(), 1000);
-
-  }catch(e){
-    showFooter(" Error: " + e.message, "error");
-  }
-}
-
-/* LOAD NOTIFICATIONS */
-async function loadNotifications(){
-  try{
-    const res = await fetch(binGet,{headers});
-    const data = await res.json();
-    let arr = data.record;
-
-    if(!Array.isArray(arr)) arr=[arr];
-
-    const userObj = arr.find(u => u.user.toLowerCase() === currentUser.toLowerCase());
-
-    if(!userObj || !userObj.notice){
-      document.getElementById("notiList").innerHTML = '<div class="none">No notifications yet</div>';
-      showFooter("<div> No new notifications <div>", "");
-      return;
-    }
-
-    const isSeen = userObj.seen === true;
-    const noticeClass = isSeen ? "oldNote" : "newNote";
-    const badge = isSeen ? "" : '<span class="badge">NEW</span>';
-
-    document.getElementById("notiList").innerHTML = `
-      <div class="${noticeClass} notice">
-        ${badge}
-        <strong>Message:</strong> ${userObj.notice}
-        <div><strong>Contact:</strong> ${userObj.contact || "N/A"}</div>
-        <div class="date">${userObj.date || "No date"}</div>
+    <!-- Ask name box -->
+    <div id="askBox" class="block" style="display:none;">
+      <h2><i class="fa fa-user-circle"></i> Register Username</h2>
+      <label class="field-label">Your exact username</label>
+      <div class="input-wrap">
+        <i class="fa fa-user prefix"></i>
+        <input id="nameInput" type="text" class="rx-input" placeholder="Type your registered name">
       </div>
-    `;
+      <button class="rx-btn" onclick="registerUser()">
+        <i class="fa fa-save"></i> Save & Continue
+      </button>
+    </div>
 
-    if(!isSeen) showFooter(" New notification received!", "success");
-    else showFooter(" Notifications up to date", "");
+    <!-- Main notifications box -->
+    <div id="mainBox" class="block" style="display:none;">
+      <h2><i class="fa fa-id-badge"></i> Logged In As</h2>
+      <div class="user-pill">
+        <i class="fa fa-user-check"></i>
+        <strong id="userShow"></strong>
+      </div>
 
-  } catch(e) {
-    showFooter("❌ Connection Error", "error");
-  }
-}
+      <h2 style="margin-top:20px;"><i class="fa fa-bell"></i> Notifications</h2>
+      <div id="notiList"></div>
+    </div>
 
-</script>
+  </div>
 
+  <!-- FOOTER STATUS -->
+  <div id="footerBar" class="footer-bar">
+    <i class="fa fa-circle-notch fa-spin"></i> Loading...
+  </div>
+
+  <script>
+    // ── THEME ──
+    const root = document.documentElement;
+    const themeIcon = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      root.setAttribute('data-theme', t);
+      themeIcon.className = t === 'dark' ? 'fa fa-sun' : 'fa fa-moon';
+      localStorage.setItem('pi_theme', t);
+    }
+    applyTheme(localStorage.getItem('pi_theme') || 'light');
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+
+    // ── FOOTER STATUS ──
+    function showFooter(message, type = '', icon = '') {
+      const bar = document.getElementById('footerBar');
+      const iconMap = { success: 'fa-check-circle', error: 'fa-times-circle', warning: 'fa-exclamation-triangle', '': 'fa-circle-notch' };
+      const ic = icon || iconMap[type] || 'fa-info-circle';
+      bar.innerHTML = `<i class="fa ${ic}"></i> ${message}`;
+      bar.className = 'footer-bar ' + type;
+    }
+
+    // ── JSONBIN CONFIG (unchanged) ──
+    const binBase = "https://api.jsonbin.io/v3/b/6958dfa8ae596e708fc1dd48";
+    const binGet  = binBase + "/latest";
+    const headers = { "X-Master-Key": "$2a$10$5TyPwxtO8pS6G5qBROpTx.PX3NTZx3bg/W6cnelH2J5Qzyfz27ZA." };
+
+    const PROFILE_DATA_KEY = "currentUser";
+    const SAVE_KEY         = "username";
+    let currentUser        = "";
+
+    // ── INIT ──
+    window.onload = async () => {
+      let username = null;
+      const profileData = localStorage.getItem(PROFILE_DATA_KEY);
+      if (profileData) {
+        const parsed = JSON.parse(profileData);
+        if (parsed.Name) username = parsed.Name.trim();
+      }
+      if (!username) username = localStorage.getItem(SAVE_KEY);
+
+      if (!username) {
+        document.getElementById('askBox').style.display = 'block';
+        showFooter('No profile found. Please register.', 'warning');
+        return;
+      }
+
+      currentUser = username;
+      document.getElementById('mainBox').style.display = 'block';
+      document.getElementById('userShow').textContent  = username;
+      showFooter('Logged in as: ' + username, 'success');
+
+      loadNotifications();
+      setInterval(loadNotifications, 10000);
+    };
+
+    // ── REGISTER (logic unchanged) ──
+    async function registerUser() {
+      const name = document.getElementById('nameInput').value.trim();
+      if (!name) { showFooter('Enter a valid name.', 'error'); return; }
+
+      try {
+        showFooter('Saving...', '');
+        localStorage.setItem(SAVE_KEY, name);
+        const profileObj = JSON.parse(localStorage.getItem(PROFILE_DATA_KEY) || '{}');
+        profileObj.Name  = name;
+        localStorage.setItem(PROFILE_DATA_KEY, JSON.stringify(profileObj));
+        currentUser = name;
+
+        const res = await fetch(binGet, { headers });
+        let arr   = (await res.json()).record;
+        if (!Array.isArray(arr)) arr = [arr];
+
+        const exists = arr.find(u => u.user.toLowerCase() === name.toLowerCase());
+        if (!exists) {
+          arr.push({ user: name, notice: '', contact: '', date: '', seen: false });
+          await fetch(binBase, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', ...headers },
+            body: JSON.stringify(arr)
+          });
+        }
+
+        showFooter('Name saved!', 'success');
+        setTimeout(() => location.reload(), 1000);
+
+      } catch(e) {
+        showFooter('Error: ' + e.message, 'error');
+      }
+    }
+
+    // ── LOAD NOTIFICATIONS (logic unchanged) ──
+    async function loadNotifications() {
+      try {
+        const res  = await fetch(binGet, { headers });
+        const data = await res.json();
+        let arr    = data.record;
+        if (!Array.isArray(arr)) arr = [arr];
+
+        const userObj = arr.find(u => u.user.toLowerCase() === currentUser.toLowerCase());
+
+        if (!userObj || !userObj.notice) {
+          document.getElementById('notiList').innerHTML = `
+            <div class="none">
+              <i class="fa fa-bell-slash"></i>
+              No notifications yet.
+            </div>`;
+          showFooter('No new notifications.', '');
+          return;
+        }
+
+        const isSeen = userObj.seen === true;
+        const cls    = isSeen ? 'oldNote' : 'newNote';
+        const badge  = isSeen ? '' : '<span class="badge">New</span>';
+
+        document.getElementById('notiList').innerHTML = `
+          <div class="${cls} notice">
+            ${badge}
+            <span class="notice-label">Message</span>
+            <div class="notice-msg">${userObj.notice}</div>
+            <div class="notice-contact">
+              <i class="fa fa-phone"></i>
+              ${userObj.contact || 'N/A'}
+            </div>
+            <div class="notice-date">
+              <i class="fa fa-clock"></i>
+              ${userObj.date || 'No date'}
+            </div>
+          </div>`;
+
+        if (!isSeen) showFooter('New notification received!', 'success');
+        else         showFooter('Notifications up to date.', '');
+
+      } catch(e) {
+        showFooter('Connection error.', 'error');
+      }
+    }
+  </script>
 </body>
 </html>
