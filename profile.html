@@ -1,129 +1,452 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Premier Institute — Profile</title>
-<style>
-body {
-  margin:0; font-family: Arial,sans-serif;
-  background: linear-gradient(135deg, #fdfbfb, #8FBFFA);
-  color:#074A9C; min-height:100vh; padding:20px;
-}
-.container { max-width:600px; margin:80px auto 40px; display:flex; flex-direction:column; gap:20px; }
-.block { background:#fff; padding:20px; border-radius:20px; box-shadow:0 4px 12px rgba(0,0,3,0.1); }
-.block h2 { margin:0 0 10px 0; color:#003366; font-size:18px; }
-.block input { width:100%; padding:10px; border:1px solid #d8dce0; border-radius:10px; font-size:14px; background:#fcfeff; outline:none; }
-.block input:disabled { background:#e0e0e0; color:#555; }
-.block input:focus { border-color:#8FBFFA; box-shadow:0 4px 14px rgba(102,166,255,0.16); }
-.account-status { font-weight:bold; padding:8px 12px; border-radius:12px; display:inline-block; margin-top:5px; }
-.status-safe { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
-.status-warning { background:#fff3cd; color:#856404; border:1px solid #ffeeba; }
-.status-danger { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premier Institute — Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --cream:      #fdf6ed;
+      --cream2:     #f5ebe0;
+      --cream3:     #ede0cc;
+      --gold:       #c9a97a;
+      --gold2:      #b8935f;
+      --brown:      #6b3a1f;
+      --brown2:     #8c4e28;
+      --brown-dark: #3b1f0a;
+      --text:       #2c1a0e;
+      --text2:      #7a5230;
+      --text3:      #a8835a;
+      --border:     #ddc9aa;
+      --shadow:     rgba(107,58,31,0.12);
+      --bg:         #f5ebe0;
+      --card:       #fdf6ed;
+    }
+    [data-theme="dark"] {
+      --cream:      #1e1510;
+      --cream2:     #261a11;
+      --cream3:     #2e2016;
+      --gold:       #c9a97a;
+      --gold2:      #b8935f;
+      --brown:      #c9a97a;
+      --brown2:     #e0bc8a;
+      --brown-dark: #f5ebe0;
+      --text:       #f0e6d6;
+      --text2:      #c9a97a;
+      --text3:      #8c6a40;
+      --border:     #3d2a18;
+      --shadow:     rgba(0,0,0,0.4);
+      --bg:         #17100a;
+      --card:       #1e1510;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.4s, color 0.4s;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0; opacity: 0.4;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; height: 62px;
+      backdrop-filter: blur(16px);
+      transition: background 0.4s, border-color 0.4s;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--brown-dark);
+      transition: color 0.4s;
+    }
+    .topbar-brand span { color: var(--gold2); }
+    .topbar-right { display: flex; gap: 10px; align-items: center; }
+
+    .icon-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--cream2);
+      color: var(--text2);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.25s;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .icon-btn:hover { background: var(--cream3); color: var(--brown); border-color: var(--gold); }
+
+    /* ── CONTAINER ── */
+    .container {
+      position: relative; z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 82px 20px 48px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    /* ── PAGE TITLE ── */
+    .page-title {
+      margin-bottom: 4px;
+    }
+    .page-title .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold2);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .page-title h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem; font-weight: 700;
+      color: var(--brown-dark);
+      line-height: 1.2;
+    }
+    .page-title h1 em { font-style: italic; color: var(--gold2); }
+    .page-title p {
+      font-size: 0.85rem;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    /* ── BLOCK ── */
+    .block {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      box-shadow: 0 4px 16px var(--shadow);
+      transition: background 0.4s, border-color 0.4s;
+    }
+    .block h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 600;
+      color: var(--brown-dark);
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .block h2 i { color: var(--gold2); font-size: 0.85rem; }
+
+    /* ── INPUT ── */
+    .field-label {
+      font-size: 0.68rem; font-family: 'DM Mono', monospace;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text3); margin-bottom: 6px; display: block;
+    }
+    .rx-input {
+      width: 100%; padding: 11px 14px;
+      background: var(--cream2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+      outline: none;
+      transition: border 0.2s, background 0.4s;
+    }
+    .rx-input:focus   { border-color: var(--gold); background: var(--cream); }
+    .rx-input:disabled {
+      background: var(--cream3);
+      color: var(--text3);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .rx-input::placeholder { color: var(--text3); }
+
+    /* ── STATUS BADGE ── */
+    .account-status {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem; font-weight: 500;
+      border: 1.5px solid;
+    }
+    .status-safe    { background: #eaf6ed; color: #1a6630; border-color: #a8d5b0; }
+    .status-warning { background: #fdf4dc; color: #7a5a00; border-color: #e8d080; }
+    .status-danger  { background: #fde8e8; color: #8b1a1a; border-color: #e0a0a0; }
+    [data-theme="dark"] .status-safe    { background: #0e2414; color: #6dbb82; border-color: #1e4a28; }
+    [data-theme="dark"] .status-warning { background: #2a2000; color: #d4aa30; border-color: #4a3800; }
+    [data-theme="dark"] .status-danger  { background: #2a0a0a; color: #e07070; border-color: #4a1a1a; }
+
+    /* ── FIELD GROUP (label + input together) ── */
+    .field-group { display: flex; flex-direction: column; gap: 16px; }
+    .field-item  { display: flex; flex-direction: column; gap: 5px; }
+
+    /* ── SAVE BUTTON ── */
+    .rx-btn {
+      width: 100%; padding: 13px;
+      background: var(--brown); color: #fdf6ed;
+      border: none; border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px var(--shadow);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .rx-btn:hover { background: var(--brown2); transform: translateY(-2px); }
+    [data-theme="dark"] .rx-btn { background: var(--gold2); color: #1e1510; }
+    [data-theme="dark"] .rx-btn:hover { background: var(--brown2); color: #fdf6ed; }
+
+    /* ── EDIT NOTE ── */
+    .edit-note {
+      font-size: 0.75rem;
+      color: var(--text3);
+      font-family: 'DM Mono', monospace;
+      margin-top: 4px;
+      display: flex; align-items: center; gap: 5px;
+    }
+
+    /* ── CUSTOM ALERT ── */
+    .alert-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(5px);
+      z-index: 10000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .alert-overlay.show { opacity: 1; pointer-events: all; }
+    .alert-box {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 32px 28px;
+      max-width: 300px; width: 90%;
+      transform: scale(0.88); text-align: center;
+      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), background 0.4s;
+    }
+    .alert-overlay.show .alert-box { transform: scale(1); }
+    .alert-icon-wrap {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: var(--cream2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: var(--gold2);
+      margin: 0 auto 16px;
+    }
+    .alert-box h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--brown-dark); margin-bottom: 8px; }
+    [data-theme="dark"] .alert-box h3 { color: var(--text); }
+    .alert-box p  { font-size: 0.88rem; color: var(--text2); line-height: 1.55; margin-bottom: 22px; }
+    .alert-box button {
+      width: 100%; padding: 12px;
+      background: var(--brown); color: #fdf6ed;
+      border: none; border-radius: 11px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .alert-box button:hover { background: var(--brown2); }
+    [data-theme="dark"] .alert-box button { background: var(--gold2); color: #1e1510; }
+
+    @media (max-width: 480px) {
+      .container { padding: 76px 14px 40px; }
+      .topbar    { padding: 0 14px; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <div class="topbar-left">
+      <a href="ban.html" class="icon-btn" title="Back">
+        <i class="fa fa-arrow-left"></i>
+      </a>
+      <div class="topbar-brand">Premier<span>Institute</span></div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">
+        <i class="fa fa-moon" id="themeIcon"></i>
+      </button>
+    </div>
+  </nav>
 
-  <div class="block">
-    <h2>Your Profile</h2>
-    <p>Your name and other details</p>
+  <!-- CONTENT -->
+  <div class="container">
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <span class="eyebrow"><i class="fa fa-user-circle"></i> &nbsp;My Account</span>
+      <h1>Your <em>Profile</em></h1>
+      <p>View and update your personal details below.</p>
+    </div>
+
+    <!-- Profile Fields -->
+    <div class="block">
+      <h2><i class="fa fa-id-card"></i> Personal Details</h2>
+      <div class="field-group">
+
+        <div class="field-item">
+          <label class="field-label">Full Name</label>
+          <input type="text" id="profileName" class="rx-input" placeholder="Your full name">
+          <span class="edit-note"><i class="fa fa-info-circle"></i> Can only be set once.</span>
+        </div>
+
+        <div class="field-item">
+          <label class="field-label">Class</label>
+          <input type="text" id="profileClass" class="rx-input" placeholder="e.g. X, XII">
+          <span class="edit-note"><i class="fa fa-info-circle"></i> Editable once per week.</span>
+        </div>
+
+        <div class="field-item">
+          <label class="field-label">Mobile Number</label>
+          <input type="text" id="profileNumber" class="rx-input" placeholder="10-digit number">
+          <span class="edit-note"><i class="fa fa-info-circle"></i> Can only be set once.</span>
+        </div>
+
+        <div class="field-item">
+          <label class="field-label">Batch</label>
+          <input type="text" id="profileBatch" class="rx-input" placeholder="e.g. Morning / Evening">
+          <span class="edit-note"><i class="fa fa-info-circle"></i> Editable once per week.</span>
+        </div>
+
+        <div class="field-item">
+          <label class="field-label">Date of Join</label>
+          <input type="text" id="profileJoinDate" class="rx-input" readonly>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Account Status -->
+    <div class="block">
+      <h2><i class="fa fa-shield-alt"></i> Account Status</h2>
+      <span id="accountStatus" class="account-status status-safe">
+        <i class="fa fa-check-circle"></i> Safe
+      </span>
+    </div>
+
+    <!-- Save Button -->
+    <button class="rx-btn" onclick="saveProfile()">
+      <i class="fa fa-save"></i> Save Changes
+    </button>
+
+    <!-- Back to Dashboard -->
+    <a href="ban.html" class="rx-btn" style="text-decoration:none; margin-top:0; background:transparent; color:var(--text2); border:1.5px solid var(--border); box-shadow:none;">
+      <i class="fa fa-home"></i> Back to Dashboard
+    </a>
+
   </div>
 
-  <div class="block">
-    <h2>Name</h2>
-    <input type="text" id="profileName" />
+  <!-- CUSTOM ALERT -->
+  <div class="alert-overlay" id="alertOverlay">
+    <div class="alert-box">
+      <div class="alert-icon-wrap"><i class="fa fa-info-circle" id="alertIconI"></i></div>
+      <h3 id="alertTitle">Alert</h3>
+      <p id="alertMsg"></p>
+      <button onclick="closeAlert()">OK</button>
+    </div>
   </div>
 
-  <div class="block">
-    <h2>Class</h2>
-    <input type="text" id="profileClass" />
-  </div>
-
-  <div class="block">
-    <h2>Number</h2>
-    <input type="text" id="profileNumber" />
-  </div>
-
-  <div class="block">
-    <h2>Batch</h2>
-    <input type="text" id="profileBatch" />
-  </div>
-
-  <div class="block">
-    <h2>Date of Join</h2>
-    <input type="text" id="profileJoinDate" readonly />
-  </div>
-
-  <div class="block">
-    <h2>Account Status</h2>
-    <span id="accountStatus" class="account-status status-safe">Safe</span>
-  </div>
-
-  <button onclick="saveProfile()" style="padding:12px; border:none; border-radius:10px; background:#66a6ff; color:#fff; font-weight:bold; cursor:pointer;">Save Changes</button>
-</div>
-
-<script>
-// ==== CONFIG ====
-const userKey = "currentUser";
-const joinKey = "joinDate";
-const editLogKey = "editTimestamps"; // tracks last edit per field
-
-// ==== LOAD PROFILE ====
-let user = JSON.parse(localStorage.getItem(userKey) || "{}");
-const editLog = JSON.parse(localStorage.getItem(editLogKey) || "{}");
-
-// Set join date if first visit
-let joinDate = localStorage.getItem(joinKey);
-if(!joinDate){
-  joinDate = new Date().toLocaleDateString();
-  localStorage.setItem(joinKey, joinDate);
-}
-document.getElementById("profileJoinDate").value = joinDate;
-
-// Helper: check if editable
-function canEdit(field){
-  if(user[field]) return false; // already set
-  const lastEdit = editLog[field];
-  if(!lastEdit) return true; // never edited
-  const diff = Date.now() - lastEdit;
-  return diff >= 7*24*60*60*1000; // 1 week
-}
-
-// Autofill and readonly logic
-['Name','Class','Number','Batch'].forEach(f=>{
-  const el = document.getElementById("profile"+f);
-  el.value = user[f] || "";
-  if(!canEdit(f)){
-    el.disabled = true;
-  }
-});
-
-// Account status
-const statusEl = document.getElementById("accountStatus");
-if(!user.Number){
-  statusEl.textContent = "Warning"; statusEl.className = "account-status status-warning";
-} else if(localStorage.getItem("USERBANED")){
-  statusEl.textContent = "Banned"; statusEl.className = "account-status status-danger";
-} else {
-  statusEl.textContent = "Safe"; statusEl.className = "account-status status-safe";
-}
-
-// ==== SAVE LOGIC ====
-function saveProfile(){
-  ['Name','Class','Number','Batch'].forEach(f=>{
-    const el = document.getElementById("profile"+f);
-    if(canEdit(f) && el.value.trim()){
-      user[f] = el.value.trim();
-      editLog[f] = Date.now();
-      el.disabled = true;
+  <script>
+    // ── THEME ──
+    const root = document.documentElement;
+    const themeIcon = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      root.setAttribute('data-theme', t);
+      themeIcon.className = t === 'dark' ? 'fa fa-sun' : 'fa fa-moon';
+      localStorage.setItem('pi_theme', t);
     }
-  });
-  localStorage.setItem(userKey, JSON.stringify(user));
-  localStorage.setItem(editLogKey, JSON.stringify(editLog));
-  alert("✅ Profile updated (if editable fields changed)");
-}
-</script>
+    applyTheme(localStorage.getItem('pi_theme') || 'light');
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+
+    // ── ALERT ──
+    function showAlert(msg, title, icon) {
+      document.getElementById('alertTitle').textContent = title || 'Alert';
+      document.getElementById('alertMsg').textContent   = msg;
+      document.getElementById('alertIconI').className   = icon || 'fa fa-info-circle';
+      document.getElementById('alertOverlay').classList.add('show');
+    }
+    function closeAlert() {
+      document.getElementById('alertOverlay').classList.remove('show');
+    }
+
+    // ── PROFILE LOGIC (unchanged) ──
+    const userKey    = 'currentUser';
+    const joinKey    = 'joinDate';
+    const editLogKey = 'editTimestamps';
+
+    let user    = JSON.parse(localStorage.getItem(userKey)    || '{}');
+    const editLog = JSON.parse(localStorage.getItem(editLogKey) || '{}');
+
+    let joinDate = localStorage.getItem(joinKey);
+    if (!joinDate) {
+      joinDate = new Date().toLocaleDateString();
+      localStorage.setItem(joinKey, joinDate);
+    }
+    document.getElementById('profileJoinDate').value = joinDate;
+
+    function canEdit(field) {
+      if (user[field]) return false;
+      const lastEdit = editLog[field];
+      if (!lastEdit) return true;
+      return (Date.now() - lastEdit) >= 7 * 24 * 60 * 60 * 1000;
+    }
+
+    ['Name','Class','Number','Batch'].forEach(f => {
+      const el = document.getElementById('profile' + f);
+      el.value = user[f] || '';
+      if (!canEdit(f)) el.disabled = true;
+    });
+
+    // Account status
+    const statusEl = document.getElementById('accountStatus');
+    if (!user.Number) {
+      statusEl.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Incomplete';
+      statusEl.className = 'account-status status-warning';
+    } else if (localStorage.getItem('USERBANED')) {
+      statusEl.innerHTML = '<i class="fa fa-ban"></i> Banned';
+      statusEl.className = 'account-status status-danger';
+    } else {
+      statusEl.innerHTML = '<i class="fa fa-check-circle"></i> Safe';
+      statusEl.className = 'account-status status-safe';
+    }
+
+    function saveProfile() {
+      let changed = false;
+      ['Name','Class','Number','Batch'].forEach(f => {
+        const el = document.getElementById('profile' + f);
+        if (canEdit(f) && el.value.trim()) {
+          user[f]       = el.value.trim();
+          editLog[f]    = Date.now();
+          el.disabled   = true;
+          changed       = true;
+        }
+      });
+      localStorage.setItem(userKey,    JSON.stringify(user));
+      localStorage.setItem(editLogKey, JSON.stringify(editLog));
+      if (changed) {
+        showAlert('Profile updated successfully.', 'Saved', 'fa fa-check-circle');
+      } else {
+        showAlert('No editable fields were changed.', 'Nothing Changed', 'fa fa-info-circle');
+      }
+    }
+  </script>
 </body>
 </html>
