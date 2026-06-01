@@ -1,289 +1,595 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Premier Institute � Forgot Password</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-  :root{
-    --blue:#003366;
-    --accent:#66a6ff;
-    --bg1:#27BBF5;
-    --bg2:#f2f6f8;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family:Inter, system-ui, Arial, Helvetica, sans-serif;
-    background: linear-gradient(180deg,var(--bg1),var(--bg2));
-    color:var(--blue);
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premier Institute — Forgot Password</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  .card{
-    width:100%;
-    max-width:520px;
-    background:#BBE9FC;
-    border-radius:16px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.08);
-    padding:28px;
-    position:relative;
-    z-index:2;
-  }
+  <style>
+    :root {
+      --cream:      #fdf6ed;
+      --cream2:     #f5ebe0;
+      --cream3:     #ede0cc;
+      --gold:       #c9a97a;
+      --gold2:      #b8935f;
+      --brown:      #6b3a1f;
+      --brown2:     #8c4e28;
+      --brown-dark: #3b1f0a;
+      --text:       #2c1a0e;
+      --text2:      #7a5230;
+      --text3:      #a8835a;
+      --border:     #ddc9aa;
+      --shadow:     rgba(107,58,31,0.12);
+      --bg:         #f5ebe0;
+      --card:       #fdf6ed;
+    }
+    [data-theme="dark"] {
+      --cream:      #1e1510;
+      --cream2:     #261a11;
+      --cream3:     #2e2016;
+      --gold:       #c9a97a;
+      --gold2:      #b8935f;
+      --brown:      #c9a97a;
+      --brown2:     #e0bc8a;
+      --brown-dark: #f5ebe0;
+      --text:       #f0e6d6;
+      --text2:      #c9a97a;
+      --text3:      #8c6a40;
+      --border:     #3d2a18;
+      --shadow:     rgba(0,0,0,0.4);
+      --bg:         #17100a;
+      --card:       #1e1510;
+    }
 
-  header h1{ margin:0; font-size:22px; color:var(--blue); }
-  .note{ font-size:12px; color:#666; margin-top:6px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
-  form{ margin-top:18px; display:flex; flex-direction:column; gap:12px; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.4s, color 0.4s;
+      overflow-x: hidden;
+      padding: 24px;
+      animation: fadeIn 0.5s ease;
+    }
 
-  label{ font-size:13px; color:#234; font-weight:600; }
-  input, select{
-    width:100%;
-    padding:10px 12px;
-    border-radius:10px;
-    border:1px solid #d8dce0;
-    font-size:14px;
-    outline:none;
-    background:#fcfeff;
-  }
-  input:focus, select:focus{
-    box-shadow:0 4px 14px rgba(102,166,255,0.16);
-    border-color:var(--accent);
-  }
-  .hint { font-size:12px; color:#777; margin-top:4px; }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.4;
+    }
 
-  .submit-btn{
-    background:var(--accent);
-    color:#fff;
-    border:none;
-    padding:12px;
-    border-radius:10px;
-    font-weight:700;
-    cursor:pointer;
-    transition:transform .12s ease, box-shadow .12s ease;
-  }
-  .submit-btn:active{ transform:translateY(1px) }
-  .submit-btn[disabled]{ opacity:.6; cursor:default }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-  .status{ margin-top:12px; font-size:14px; color:var(--blue); display:none; }
-  .small-muted { font-size:12px; color:#666; margin-top:6px; text-align:center; }
+    /* ── TOPBAR ── */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; height: 62px;
+      backdrop-filter: blur(16px);
+      transition: background 0.4s, border-color 0.4s;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700;
+      color: var(--brown-dark); transition: color 0.4s;
+    }
+    .topbar-brand span { color: var(--gold2); }
+    .topbar-right { display: flex; gap: 10px; align-items: center; }
 
-  /* Improved ban overlay: white block with black text */
-  .ban-overlay{
-    position:fixed;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-    padding:20px;
-    background:rgba(0,0,0,0.3);
-  }
-  .ban-card{
-    background:#fff;
-    color:#000;
-    border-radius:12px;
-    padding:24px;
-    max-width:400px;
-    text-align:center;
-    box-shadow:0 6px 20px rgba(0,0,0,0.15);
-  }
-  .ban-card h2{ margin:0 0 12px; font-size:22px; }
-  .ban-card p{ font-size:16px; line-height:1.4; }
-  .ban-card input{
-    margin-top:12px;
-    padding:10px;
-    border-radius:6px;
-    border:1px solid #ccc;
-    font-size:14px;
-    width:100%;
-    text-align:center;
-  }
-  .ban-card button{
-    margin-top:12px;
-    padding:10px 16px;
-    border:none;
-    border-radius:6px;
-    background:var(--accent);
-    color:#fff;
-    font-weight:bold;
-    cursor:pointer;
-    width:100%;
-  }
+    .icon-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--cream2);
+      color: var(--text2);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.25s;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .icon-btn:hover { background: var(--cream3); color: var(--brown); border-color: var(--gold); }
 
-  @media (max-width:420px){
-    .card{ padding:18px; border-radius:12px; }
-    .ban-card{ padding:18px; }
-  }
-</style>
+    /* ── CARD ── */
+    .card {
+      position: relative; z-index: 1;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      width: min(480px, 100%);
+      box-shadow: 0 12px 48px var(--shadow);
+      margin-top: 62px;
+      transition: background 0.4s, border-color 0.4s;
+    }
+
+    /* ── HEADER ── */
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold2);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .card h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem; font-weight: 700;
+      color: var(--brown-dark);
+      line-height: 1.2;
+      margin-bottom: 6px;
+      transition: color 0.4s;
+    }
+    .card h1 em { font-style: italic; color: var(--gold2); }
+    .card .note {
+      font-size: 0.78rem;
+      color: var(--text3);
+      font-family: 'DM Mono', monospace;
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 0;
+    }
+    .card .note i { color: #e05555; }
+
+    .divider {
+      height: 1px; background: var(--border);
+      margin: 22px 0;
+      transition: background 0.4s;
+    }
+
+    /* ── FORM ── */
+    form { display: flex; flex-direction: column; gap: 16px; }
+
+    .field-item { display: flex; flex-direction: column; gap: 5px; }
+    .field-label {
+      font-size: 0.68rem; font-family: 'DM Mono', monospace;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text3); display: block;
+    }
+    .input-wrap { position: relative; }
+    .input-wrap i.prefix {
+      position: absolute; left: 13px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3); font-size: 0.82rem;
+      pointer-events: none;
+    }
+    .rx-input {
+      width: 100%; padding: 11px 14px 11px 36px;
+      background: var(--cream2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+      outline: none;
+      transition: border 0.2s, background 0.4s;
+    }
+    .rx-input:focus { border-color: var(--gold); background: var(--cream); }
+    .rx-input::placeholder { color: var(--text3); }
+
+    .rx-select {
+      width: 100%; padding: 11px 36px 11px 36px;
+      background: var(--cream2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem;
+      outline: none; cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a8835a' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      transition: border 0.2s, background 0.4s;
+    }
+    .rx-select:focus { border-color: var(--gold); }
+
+    .hint {
+      font-size: 0.72rem;
+      color: var(--text3);
+      font-family: 'DM Mono', monospace;
+      display: flex; align-items: center; gap: 5px;
+    }
+
+    .small-muted {
+      font-size: 0.78rem;
+      color: var(--text3);
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      display: flex; align-items: flex-start; gap: 6px;
+      background: var(--cream2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      line-height: 1.5;
+    }
+    .small-muted i { color: var(--gold2); flex-shrink: 0; margin-top: 2px; }
+
+    /* ── BUTTONS ── */
+    .rx-btn {
+      width: 100%; padding: 13px;
+      background: var(--brown); color: #fdf6ed;
+      border: none; border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px var(--shadow);
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+    }
+    .rx-btn:hover { background: var(--brown2); transform: translateY(-2px); }
+    .rx-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    [data-theme="dark"] .rx-btn { background: var(--gold2); color: #1e1510; }
+    [data-theme="dark"] .rx-btn:hover { background: var(--brown2); color: #fdf6ed; }
+
+    .rx-btn-outline {
+      width: 100%; padding: 12px;
+      background: transparent;
+      color: var(--text2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem; font-weight: 500;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .rx-btn-outline:hover { background: var(--cream2); border-color: var(--gold); color: var(--brown); }
+
+    /* ── STATUS ── */
+    .status {
+      display: none;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-family: 'DM Mono', monospace;
+      border: 1.5px solid var(--border);
+      background: var(--cream2);
+      color: var(--text2);
+      align-items: center; gap: 8px;
+    }
+    .status.show { display: flex; }
+    .status.error { border-color: #e05555; color: #8b1a1a; background: #fde8e8; }
+    [data-theme="dark"] .status.error { background: #2a0a0a; color: #e07070; border-color: #4a1a1a; }
+    .status.success { border-color: #a8d5b0; color: #1a6630; background: #eaf6ed; }
+    [data-theme="dark"] .status.success { background: #0e2414; color: #6dbb82; border-color: #1e4a28; }
+
+    /* ── BAN OVERLAY ── */
+    .ban-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      display: none; justify-content: center; align-items: center;
+      z-index: 9999; padding: 20px;
+    }
+    .ban-overlay.show { display: flex; }
+    .ban-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      max-width: 340px; width: 100%;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+    }
+    .ban-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: #fde8e8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: #e05555;
+      margin: 0 auto 16px;
+    }
+    [data-theme="dark"] .ban-icon { background: #3a1a1a; }
+    .ban-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; color: var(--brown-dark); margin-bottom: 8px;
+    }
+    .ban-card p { font-size: 0.88rem; color: var(--text2); margin-bottom: 18px; line-height: 1.5; }
+    .ban-card .rx-input { margin-bottom: 10px; padding: 11px 14px; text-align: center; }
+    .ban-card .rx-btn   { margin-top: 0; }
+
+    /* ── CUSTOM ALERT ── */
+    .alert-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(5px);
+      z-index: 10000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .alert-overlay.show { opacity: 1; pointer-events: all; }
+    .alert-box {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px; padding: 32px 28px;
+      max-width: 300px; width: 90%;
+      transform: scale(0.88); text-align: center;
+      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), background 0.4s;
+    }
+    .alert-overlay.show .alert-box { transform: scale(1); }
+    .alert-icon-wrap {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: var(--cream2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: var(--gold2);
+      margin: 0 auto 16px;
+    }
+    .alert-box h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--brown-dark); margin-bottom: 8px; }
+    [data-theme="dark"] .alert-box h3 { color: var(--text); }
+    .alert-box p  { font-size: 0.88rem; color: var(--text2); line-height: 1.55; margin-bottom: 22px; }
+    .alert-box button {
+      width: 100%; padding: 12px;
+      background: var(--brown); color: #fdf6ed;
+      border: none; border-radius: 11px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .alert-box button:hover { background: var(--brown2); }
+    [data-theme="dark"] .alert-box button { background: var(--gold2); color: #1e1510; }
+
+    @media (max-width: 480px) {
+      .card { padding: 28px 18px; }
+      .topbar { padding: 0 14px; }
+    }
+  </style>
 </head>
 <body>
-  <div class="card" role="main">
-    <header>
-      <h1>Premier Institute</h1>
-      <div class="note">Fake or spam requests can lead to permanent account suspension</div>
-    </header>
+
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <div class="topbar-left">
+      <a href="login.html" class="icon-btn" title="Back">
+        <i class="fa fa-arrow-left"></i>
+      </a>
+      <div class="topbar-brand">Premier<span>Institute</span></div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">
+        <i class="fa fa-moon" id="themeIcon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- CARD -->
+  <div class="card">
+    <span class="eyebrow"><i class="fa fa-key"></i> &nbsp;Account Recovery</span>
+    <h1>Forgot <em>Password?</em></h1>
+    <p class="note"><i class="fa fa-exclamation-triangle"></i> Fake or spam requests may lead to a permanent ban.</p>
+
+    <div class="divider"></div>
 
     <form id="forgotForm" onsubmit="return handleSubmit(event)">
-      <div>
-        <label for="name">Name</label>
-        <input id="name" name="name" type="text" placeholder="Your name" required />
-        <div class="hint">Will be saved locally for future convenience.</div>
+
+      <div class="field-item">
+        <label class="field-label">Full Name</label>
+        <div class="input-wrap">
+          <i class="fa fa-user prefix"></i>
+          <input id="name" type="text" class="rx-input" placeholder="Your registered name" required>
+        </div>
+        <span class="hint"><i class="fa fa-info-circle"></i> Will be auto-saved for convenience.</span>
       </div>
 
-      <div>
-        <label for="class">Class</label>
-        <select id="class" name="class" required>
-          <option value="">Select class</option>
-          <option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
-          <option>9</option><option>10</option><option>11</option><option>12</option>
-        </select>
+      <div class="field-item">
+        <label class="field-label">Class</label>
+        <div class="input-wrap">
+          <i class="fa fa-graduation-cap prefix"></i>
+          <select id="class" class="rx-select" required>
+            <option value="">Select your class</option>
+            <option>4</option><option>5</option><option>6</option>
+            <option>7</option><option>8</option><option>9</option>
+            <option>10</option><option>11</option><option>12</option>
+          </select>
+        </div>
       </div>
 
-      <div>
-        <label for="number">Number</label>
-        <input id="number" name="number" type="text" placeholder="10 digit mobile number" required />
-        <div class="hint">Enter number exactly as you used during signup (saved locally).</div>
+      <div class="field-item">
+        <label class="field-label">Mobile Number</label>
+        <div class="input-wrap">
+          <i class="fa fa-phone prefix"></i>
+          <input id="number" type="text" class="rx-input" placeholder="10-digit mobile number" required>
+        </div>
+        <span class="hint"><i class="fa fa-info-circle"></i> Enter the number used during signup.</span>
       </div>
 
-      <div class="small-muted">After submitting, admin will manually issue a new password and send it to you.</div>
+      <div class="small-muted">
+        <i class="fa fa-clock"></i>
+        After submitting, admin will manually issue a new password and send it to you.
+      </div>
 
-      <button id="submitBtn" class="submit-btn" type="submit">Submit</button>
       <div id="status" class="status" role="status"></div>
+
+      <button id="submitBtn" class="rx-btn" type="submit">
+        <i class="fa fa-paper-plane"></i> Submit Request
+      </button>
+
+      <a href="login.html" class="rx-btn-outline">
+        <i class="fa fa-arrow-left"></i> Back to Login
+      </a>
+
     </form>
   </div>
 
-  <div id="banOverlay" class="ban-overlay" style="display:none;">
+  <!-- BAN OVERLAY -->
+  <div id="banOverlay" class="ban-overlay">
     <div class="ban-card">
-      <h2>You are banned</h2>
-      <p id="banMsg">Banned for 7 days due to spamming requests</p>
-      <input type="password" id="unbanPass" placeholder="Enter password" />
-      <button onclick="tryUnban()">Unban</button>
+      <div class="ban-icon"><i class="fa fa-ban"></i></div>
+      <h2>Account Banned</h2>
+      <p id="banMsg">You are banned due to spam requests.</p>
+      <input type="password" id="unbanPass" class="rx-input" placeholder="Enter unban password">
+      <button class="rx-btn" onclick="tryUnban()">
+        <i class="fa fa-unlock-alt"></i> Unban
+      </button>
     </div>
   </div>
 
-<script>
-  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1421051311012581398/vXpnuV__MgPYlsBq9kz6P4OSBNxFdq5cqYgoN07eobfh2P5EWVEkO_AoXv95HIBuK9L1";
-  const CURRENT_USER_KEY = "currentUser";
-  const USER_CLASS_KEY = "userClass";
-  const REQUEST_LOG_KEY = "requestTimestamps";
-  const BAN_KEY = "USERBANED";
-  const BAN_DURATION = 7 * 24 * 60 * 60 * 1000;
+  <!-- CUSTOM ALERT -->
+  <div class="alert-overlay" id="alertOverlay">
+    <div class="alert-box">
+      <div class="alert-icon-wrap"><i class="fa fa-info-circle" id="alertIconI"></i></div>
+      <h3 id="alertTitle">Alert</h3>
+      <p id="alertMsg"></p>
+      <button onclick="closeAlert()">OK</button>
+    </div>
+  </div>
 
-  const form = document.getElementById("forgotForm");
-  const submitBtn = document.getElementById("submitBtn");
-  const statusEl = document.getElementById("status");
-  const banOverlay = document.getElementById("banOverlay");
-  const banMsg = document.getElementById("banMsg");
-  const unbanPass = document.getElementById("unbanPass");
-
-  // Auto-fill from localStorage
-  (function autoFill(){
-    const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY) || "null");
-    if(saved){
-      document.getElementById("name").value = saved.Name || "";
-      document.getElementById("class").value = saved.Class || "";
-      document.getElementById("number").value = saved.Number || "";
+  <script>
+    // ── THEME ──
+    const root = document.documentElement;
+    const themeIcon = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      root.setAttribute('data-theme', t);
+      themeIcon.className = t === 'dark' ? 'fa fa-sun' : 'fa fa-moon';
+      localStorage.setItem('pi_theme', t);
     }
-  })();
+    applyTheme(localStorage.getItem('pi_theme') || 'light');
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
 
-  // Check ban on load
-  (function checkBan(){
-    const banData = JSON.parse(localStorage.getItem(BAN_KEY) || "null");
-    if(banData && Date.now() < banData.expires){
-      showBanOverlay(banData.expires);
-    } else {
-      localStorage.removeItem(BAN_KEY);
+    // ── ALERT ──
+    function showAlert(msg, title, icon) {
+      document.getElementById('alertTitle').textContent = title || 'Alert';
+      document.getElementById('alertMsg').textContent   = msg;
+      document.getElementById('alertIconI').className   = icon || 'fa fa-info-circle';
+      document.getElementById('alertOverlay').classList.add('show');
     }
-  })();
-
-  function showBanOverlay(expiry){
-    const remaining = expiry - Date.now();
-    const days = Math.ceil(remaining / (1000*60*60*24));
-    banMsg.textContent = `Banned for ${days} day(s).`;
-    banOverlay.style.display = "flex";
-    submitBtn.disabled = true;
-  }
-
-  function tryUnban(){
-    if(unbanPass.value === "GUPTA"){
-      localStorage.removeItem(BAN_KEY);
-      banOverlay.style.display = "none";
-      submitBtn.disabled = false;
-      alert("Unbanned successfully");
-    } else {
-      alert("Wrong password. Ask admin for unban.");
-    }
-  }
-
-  function logRequest(){
-    let log = JSON.parse(localStorage.getItem(REQUEST_LOG_KEY) || "[]");
-    const now = Date.now();
-    log.push(now);
-    log = log.filter(t => now - t < BAN_DURATION);
-    localStorage.setItem(REQUEST_LOG_KEY, JSON.stringify(log));
-    return log;
-  }
-
-  async function handleSubmit(e){
-    e.preventDefault();
-    if(localStorage.getItem(BAN_KEY)){
-      showBanOverlay(JSON.parse(localStorage.getItem(BAN_KEY)).expires);
-      return false;
+    function closeAlert() {
+      document.getElementById('alertOverlay').classList.remove('show');
     }
 
-    const name = document.getElementById("name").value.trim();
-    const cls = document.getElementById("class").value.trim();
-    let number = document.getElementById("number").value.trim();
+    // ── CONFIG (unchanged) ──
+    const DISCORD_WEBHOOK   = "https://discord.com/api/webhooks/1421051311012581398/vXpnuV__MgPYlsBq9kz6P4OSBNxFdq5cqYgoN07eobfh2P5EWVEkO_AoXv95HIBuK9L1";
+    const CURRENT_USER_KEY  = "currentUser";
+    const USER_CLASS_KEY    = "userClass";
+    const REQUEST_LOG_KEY   = "requestTimestamps";
+    const BAN_KEY           = "USERBANED";
+    const BAN_DURATION      = 7 * 24 * 60 * 60 * 1000;
 
-    if(!name || !cls || !number){ showStatus("Please fill all fields.", true); return false; }
-    number = number.replace(/\D/g,'');
-    if(!/^[0-9]{10}$/.test(number)){ showStatus("Enter a valid 10-digit number.", true); return false; }
+    const submitBtn = document.getElementById('submitBtn');
+    const statusEl  = document.getElementById('status');
 
-    const currentUser = { Name:name, Class:cls, Number:number };
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-    localStorage.setItem(USER_CLASS_KEY, cls);
-
-    const logs = logRequest();
-    if(logs.length > 1){
-      const banData = { expires: Date.now() + BAN_DURATION };
-      localStorage.setItem(BAN_KEY, JSON.stringify(banData));
-      showBanOverlay(banData.expires);
-      return false;
-    }
-
-    const timestamp = new Date().toISOString();
-    const content = `**Forgot Password Request**\n> Name: ${name}\n> Class: ${cls}\n> Number: ${number}\n> Time: ${timestamp}`;
-    submitBtn.disabled = true;
-    showStatus("Sending request... Please wait.", false);
-
-    try{
-      const res = await fetch(DISCORD_WEBHOOK,{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({content})
-      });
-      if(res.ok || res.status===204){
-        showStatus("Request sent � admin will assign a new password manually.", false);
-      }else{
-        showStatus("Failed to send request. Try again. ("+res.status+")", true);
+    // ── AUTO-FILL ──
+    (function autoFill() {
+      const saved = JSON.parse(localStorage.getItem(CURRENT_USER_KEY) || 'null');
+      if (saved) {
+        document.getElementById('name').value   = saved.Name   || '';
+        document.getElementById('class').value  = saved.Class  || '';
+        document.getElementById('number').value = saved.Number || '';
       }
-    }catch(err){
-      showStatus("Network failed. Please try again later.", true);
-    }finally{
-      submitBtn.disabled = false;
-    }
-  }
+    })();
 
-  function showStatus(msg,isError=false){
-    statusEl.style.display="block";
-    statusEl.style.color=isError?"#b00020":"var(--blue)";
-    statusEl.textContent=msg;
-  }
-</script>
+    // ── BAN CHECK ──
+    (function checkBan() {
+      const banData = JSON.parse(localStorage.getItem(BAN_KEY) || 'null');
+      if (banData && Date.now() < banData.expires) {
+        showBanOverlay(banData.expires);
+      } else {
+        localStorage.removeItem(BAN_KEY);
+      }
+    })();
+
+    function showBanOverlay(expiry) {
+      const days = Math.ceil((expiry - Date.now()) / (1000 * 60 * 60 * 24));
+      document.getElementById('banMsg').textContent = `You are banned for ${days} more day(s).`;
+      document.getElementById('banOverlay').classList.add('show');
+      submitBtn.disabled = true;
+    }
+
+    function tryUnban() {
+      if (document.getElementById('unbanPass').value === 'GUPTA') {
+        localStorage.removeItem(BAN_KEY);
+        document.getElementById('banOverlay').classList.remove('show');
+        submitBtn.disabled = false;
+        showAlert('You have been unbanned successfully.', 'Unbanned', 'fa fa-check-circle');
+      } else {
+        showAlert('Wrong password. Contact admin for help.', 'Access Denied', 'fa fa-times-circle');
+      }
+    }
+
+    function logRequest() {
+      let log = JSON.parse(localStorage.getItem(REQUEST_LOG_KEY) || '[]');
+      const now = Date.now();
+      log.push(now);
+      log = log.filter(t => now - t < BAN_DURATION);
+      localStorage.setItem(REQUEST_LOG_KEY, JSON.stringify(log));
+      return log;
+    }
+
+    function showStatus(msg, isError = false, isSuccess = false) {
+      statusEl.textContent = msg;
+      statusEl.className   = 'status show' + (isError ? ' error' : isSuccess ? ' success' : '');
+      statusEl.innerHTML   = `<i class="fa fa-${isError ? 'times' : isSuccess ? 'check' : 'circle-notch fa-spin'}-circle"></i> ${msg}`;
+    }
+
+    // ── SUBMIT (logic unchanged) ──
+    async function handleSubmit(e) {
+      e.preventDefault();
+      if (localStorage.getItem(BAN_KEY)) {
+        showBanOverlay(JSON.parse(localStorage.getItem(BAN_KEY)).expires);
+        return false;
+      }
+
+      const name   = document.getElementById('name').value.trim();
+      const cls    = document.getElementById('class').value.trim();
+      let   number = document.getElementById('number').value.trim();
+
+      if (!name || !cls || !number) { showStatus('Please fill all fields.', true); return false; }
+      number = number.replace(/\D/g, '');
+      if (!/^[0-9]{10}$/.test(number)) { showStatus('Enter a valid 10-digit number.', true); return false; }
+
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ Name: name, Class: cls, Number: number }));
+      localStorage.setItem(USER_CLASS_KEY, cls);
+
+      const logs = logRequest();
+      if (logs.length > 1) {
+        const banData = { expires: Date.now() + BAN_DURATION };
+        localStorage.setItem(BAN_KEY, JSON.stringify(banData));
+        showBanOverlay(banData.expires);
+        return false;
+      }
+
+      const timestamp = new Date().toISOString();
+      const content   = `**Forgot Password Request**\n> Name: ${name}\n> Class: ${cls}\n> Number: ${number}\n> Time: ${timestamp}`;
+
+      submitBtn.disabled = true;
+      showStatus('Sending request... please wait.');
+
+      try {
+        const res = await fetch(DISCORD_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
+        });
+        if (res.ok || res.status === 204) {
+          showStatus('Request sent! Admin will assign a new password manually.', false, true);
+        } else {
+          showStatus(`Failed to send. Try again. (${res.status})`, true);
+        }
+      } catch (err) {
+        showStatus('Network error. Please try again later.', true);
+      } finally {
+        submitBtn.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>
